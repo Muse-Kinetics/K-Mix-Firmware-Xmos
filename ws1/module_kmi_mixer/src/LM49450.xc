@@ -1,0 +1,26 @@
+#include "LM49450.h"
+#include "i2c_app.h"
+
+i2c_block_entry init_lm49450_48k_vals [] = {
+        {REG_CLOCK,{MCLOCK_DIVIDER_2}},
+        {REG_CP_DIV,{CP_DIV_96KHZ}},
+        {REG_I2S_MODE,{I2S_LEFT_JUSTIFIED}},
+        {REG_I2S_CLOCK,{LMI_IS_SLAVE}},
+        {REG_HEADPHONE_VOL,{HEADPHONE_VOL_32}},
+        {REG_LOUDSPEAKER_VOL,{LOUDSPEAKER_VOL_32}},
+        {REG_MODE_CONTROL,{DAC_MODE_01 | DEVICE_DISABLE}},
+        {REG_MODE_CONTROL,{DAC_MODE_01 | DEVICE_ENABLE}}
+ };
+
+
+i2c_block_entry init_lm49450_96k_vals [] = {
+        {REG_CLOCK,{MCLOCK_DIVIDER_2}},
+        {REG_CP_DIV,{CP_DIV_96KHZ}},
+        {REG_I2S_MODE,{I2S_LEFT_JUSTIFIED}},
+        {REG_I2S_CLOCK,{LMI_IS_SLAVE}},
+        {REG_HEADPHONE_VOL,{HEADPHONE_VOL_32}},
+        {REG_LOUDSPEAKER_VOL,{LOUDSPEAKER_VOL_32}},
+        {REG_MODE_CONTROL,{DAC_MODE_10 | DEVICE_DISABLE}},
+        {REG_MODE_CONTROL,{DAC_MODE_10 | DEVICE_ENABLE}},
+ };
+

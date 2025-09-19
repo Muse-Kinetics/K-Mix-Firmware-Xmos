@@ -1,0 +1,974 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>USB Audio API Reference &mdash; USB Audio Design Guide v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="USB Audio Design Guide v documentation" href="index.html" />
+    <link rel="next" title="Configuration Defines" href="page3.html#document-api_custom_defines" />
+    <link rel="prev" title="The U-Series Multi-Channel USB Audio Kit" href="page5.html#document-sw_u16_audio8" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>USB Audio API Reference</h1>
+
+             <div class='columns'>
+            
+  <span id="document-api_custom_defines"></span><h2 class="topic" id="configuration-defines"><span id="sec-custom-defines-api"></span>Configuration Defines</h2>
+<div><p>An application using the USB audio framework needs to have defines set for configuration.
+Defaults for these defines are found in <tt class="docutils literal"><span class="pre">module_usb_audio</span></tt> in <tt class="docutils literal"><span class="pre">devicedefines.h</span></tt>.</p>
+<p>These defines should be over-ridden in the mandatory  <tt class="docutils literal"><span class="pre">customdefines.h</span></tt> file or in <tt class="docutils literal"><span class="pre">Makefile</span></tt>
+for a relevant build configuration.</p>
+<p>This section fully documents all of the setable defines and their default values (where appropriate).</p>
+<h3 id="code-location-tile">Code location (tile)</h3>
+<div><ul class='lib'><li class="macro">
+<h2 id="AUDIO_IO_TILE">
+<tt class="descname">AUDIO_IO_TILE</tt></h2>
+<p>Location (tile) of audio I/O.</p>
+<p>Default: 0</p>
+</li>
+
+<li class="macro">
+<h2 id="XUD_TILE">
+<tt class="descname">XUD_TILE</tt></h2>
+<p>Location (tile) of audio I/O.</p>
+<p>Default: 0</p>
+</li>
+
+<li class="macro">
+<h2 id="IAP_TILE">
+<tt class="descname">IAP_TILE</tt></h2>
+<p>Location (tile) of IAP.</p>
+<p>Default: AUDIO_IO_TILE</p>
+</li>
+
+<li class="macro">
+<h2 id="MIDI_TILE">
+<tt class="descname">MIDI_TILE</tt></h2>
+<p>Location (tile) of MIDI I/O.</p>
+<p>Default: AUDIO_IO_TILE</p>
+</li>
+
+</ul></div><h3 id="channel-counts">Channel Counts</h3>
+<div><ul class='lib'><li class="macro">
+<h2 id="NUM_USB_CHAN_OUT">
+<tt class="descname">NUM_USB_CHAN_OUT</tt></h2>
+<p>Number of output channels (host to device).</p>
+<p>Default: NONE (Must be defined by app)</p>
+</li>
+
+<li class="macro">
+<h2 id="NUM_USB_CHAN_IN">
+<tt class="descname">NUM_USB_CHAN_IN</tt></h2>
+<p>Number of input channels (device to host).</p>
+<p>Default: NONE (Must be defined by app)</p>
+</li>
+
+<li class="macro">
+<h2 id="DSD_CHANS_DAC">
+<tt class="descname">DSD_CHANS_DAC</tt></h2>
+<p>Number of DSD output channels.</p>
+<p>Default: 0 (disabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="I2S_CHANS_DAC">
+<tt class="descname">I2S_CHANS_DAC</tt></h2>
+<p>Number of IS2 channesl to DAC/CODEC.</p>
+<p>Must be a multiple of 2.</p>
+<p>Default: NONE (Must be defined by app)</p>
+</li>
+
+<li class="macro">
+<h2 id="I2S_CHANS_ADC">
+<tt class="descname">I2S_CHANS_ADC</tt></h2>
+<p>Number of I2S channels from ADC/CODEC.</p>
+<p>Must be a multiple of 2.</p>
+<p>Default: NONE (Must be defined by app)</p>
+</li>
+
+</ul></div><h3 id="frequencies-and-clocks">Frequencies and Clocks</h3>
+<div><ul class='lib'><li class="macro">
+<h2 id="MAX_FREQ">
+<tt class="descname">MAX_FREQ</tt></h2>
+<p>Max supported sample frequency for device (Hz).</p>
+<p>Default: 192000</p>
+</li>
+
+<li class="macro">
+<h2 id="MIN_FREQ">
+<tt class="descname">MIN_FREQ</tt></h2>
+<p>Min supported sample frequency for device (Hz).</p>
+<p>Default 44100</p>
+</li>
+
+<li class="macro">
+<h2 id="DEFAULT_FREQ">
+<tt class="descname">DEFAULT_FREQ</tt></h2>
+<p>Default device sample frequency.</p>
+<p>A safe default should be used. Default: MIN_FREQ</p>
+</li>
+
+<li class="macro">
+<h2 id="MCLK_441">
+<tt class="descname">MCLK_441</tt></h2>
+<p>Master clock defines for 44100 rates (in Hz).</p>
+<p>Default: NONE (Must be defined by app)</p>
+</li>
+
+<li class="macro">
+<h2 id="MCLK_48">
+<tt class="descname">MCLK_48</tt></h2>
+<p>Master clock defines for 48000 rates (in Hz).</p>
+<p>Default: NONE (Must be defined by app)</p>
+</li>
+
+</ul></div><h3 id="audio-class">Audio Class</h3>
+<div><ul class='lib'><li class="macro">
+<h2 id="AUDIO_CLASS">
+<tt class="descname">AUDIO_CLASS</tt></h2>
+<p>USB Audio Class Version.</p>
+<p>Default: 2 (Audio Class version 2.0)</p>
+</li>
+
+<li class="macro">
+<h2 id="AUDIO_CLASS_FALLBACK">
+<tt class="descname">AUDIO_CLASS_FALLBACK</tt></h2>
+<p>Whether or not to fall back to Audio Class 1.0 in USB Full-speed.</p>
+<p>Default: 0 (Disabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="FULL_SPEED_AUDIO_2">
+<tt class="descname">FULL_SPEED_AUDIO_2</tt></h2>
+<p>Whether or not to run UAC2 in full-speed.</p>
+<p>When disabled device can either operate in UAC1 mode in full-speed (if AUDIO_CLASS_FALLBACK enabled) or return &#8220;null&#8221; descriptors.</p>
+<p>Default: 1 (Enabled) when AUDIO_CLASS_FALLBACK disabled.</p>
+</li>
+
+</ul></div><h3 id="system-feature-configuration">System Feature Configuration</h3>
+<div><h4 id="midi">MIDI</h4>
+<div><ul class='lib'><li class="macro">
+<h2 id="MIDI">
+<tt class="descname">MIDI</tt></h2>
+<p>Enable MIDI functionality including buffering, descriptors etc.</p>
+<p>Default: DISABLED</p>
+</li>
+
+<li class="macro">
+<h2 id="MIDI_RX_PORT_WIDTH">
+<tt class="descname">MIDI_RX_PORT_WIDTH</tt></h2>
+<p>MIDI Rx port width (1 or 4bit).</p>
+<p>Default: 1</p>
+</li>
+
+</ul></div><h4 id="s-pdif">S/PDIF</h4>
+<div><ul class='lib'><li class="macro">
+<h2 id="SPDIF">
+<tt class="descname">SPDIF</tt></h2>
+<p>Enables SPDIF Tx.</p>
+<p>Default: 0 (Disabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="SPDIF_TX_INDEX">
+<tt class="descname">SPDIF_TX_INDEX</tt></h2>
+<p>Defines which output channels (stereo) should be output on S/PDIF.</p>
+<p>Note, Output channels indexed from 0.</p>
+<p>Default: 0 (i.e. channels 0 &amp; 1)</p>
+</li>
+
+<li class="macro">
+<h2 id="SPDIF_RX">
+<tt class="descname">SPDIF_RX</tt></h2>
+<p>Enables SPDIF Rx.</p>
+<p>Default: 0 (Disabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="SPDIF_RX_INDEX">
+<tt class="descname">SPDIF_RX_INDEX</tt></h2>
+<p>S/PDIF Rx first channel index, defines which channels S/PDIF will be input on.</p>
+<p>Note, indexed from 0.</p>
+<p>Default: NONE (Must be defined by app when SPDIF_RX enabled)</p>
+</li>
+
+</ul></div><h4 id="adat">ADAT</h4>
+<div><ul class='lib'><li class="macro">
+<h2 id="ADAT_RX">
+<tt class="descname">ADAT_RX</tt></h2>
+<p>Enables ADAT Rx.</p>
+<p>Default: 0 (Disabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="ADAT_RX_INDEX">
+<tt class="descname">ADAT_RX_INDEX</tt></h2>
+<p>ADAT Rx first channel index.</p>
+<p>defines which channels ADAT will be input on. Note, indexed from 0.</p>
+<p>Default: NONE (Must be defined by app when ADAT_RX enabled)</p>
+</li>
+
+</ul></div><h4 id="dfu">DFU</h4>
+<div><ul class='lib'><li class="macro">
+<h2 id="DFU">
+<tt class="descname">DFU</tt></h2>
+<p>Enable DFU functionality.</p>
+<p>A driver required for Windows operation.</p>
+<p>Default: 1 (Enabled)</p>
+</li>
+
+</ul></div><h4 id="hid">HID</h4>
+<div><ul class='lib'><li class="macro">
+<h2 id="HID_CONTROLS">
+<tt class="descname">HID_CONTROLS</tt></h2>
+<p>Enable HID playback controls functionality.</p>
+<p>1 for enabled, 0 for disabled.</p>
+<p>Default 0 (Disabled)</p>
+</li>
+
+</ul></div><h4 id="codec-interface">CODEC Interface</h4>
+<div><ul class='lib'><li class="macro">
+<h2 id="CODEC_MASTER">
+<tt class="descname">CODEC_MASTER</tt></h2>
+</li>
+
+</ul></div></div><h3 id="usb-device-configuration">USB Device Configuration</h3>
+<div><ul class='lib'><li class="macro">
+<h2 id="VENDOR_STR">
+<tt class="descname">VENDOR_STR</tt></h2>
+<p>Vendor String used by the device.</p>
+<p>This is also pre-pended to various strings used by the design.</p>
+<p>Default: &#8220;XMOS&#8221;</p>
+</li>
+
+<li class="macro">
+<h2 id="VENDOR_ID">
+<tt class="descname">VENDOR_ID</tt></h2>
+<p>USB Vendor ID (or VID) as assigned by the USB-IF.</p>
+<p>Default: 0x20B1 (XMOS)</p>
+</li>
+
+<li class="macro">
+<h2 id="PRODUCT_STR">
+<tt class="descname">PRODUCT_STR</tt></h2>
+<p>USB Product String for the device.</p>
+<p>If defined will be used for both PRODUCT_STR_A2 and PRODUCT_STR_A1</p>
+<p>Default: Undefined</p>
+</li>
+
+<li class="macro">
+<h2 id="PRODUCT_STR_A2">
+<tt class="descname">PRODUCT_STR_A2</tt></h2>
+<p>Product string for Audio Class 2.0 mode.</p>
+<p>Default: &#8220;xCore USB Audio 2.0&#8221;</p>
+</li>
+
+<li class="macro">
+<h2 id="PRODUCT_STR_A1">
+<tt class="descname">PRODUCT_STR_A1</tt></h2>
+<p>Product string for Audio Class 1.0 mode.</p>
+<p>Default: &#8220;xCore USB Audio 1.0&#8221;</p>
+</li>
+
+<li class="macro">
+<h2 id="PID_AUDIO_1">
+<tt class="descname">PID_AUDIO_1</tt></h2>
+<p>USB Product ID (PID) for Audio Class 1.0 mode.</p>
+<p>Only required if AUDIO_CLASS == 1 or AUDIO_CLASS_FALLBACK is enabled.</p>
+<p>Default: 0x0003</p>
+</li>
+
+<li class="macro">
+<h2 id="PID_AUDIO_2">
+<tt class="descname">PID_AUDIO_2</tt></h2>
+<p>USB Product ID (PID) for Audio Class 2.0 mode.</p>
+<p>Default: 0x0002</p>
+</li>
+
+<li class="macro">
+<h2 id="BCD_DEVICE">
+<tt class="descname">BCD_DEVICE</tt></h2>
+<p>Device firmware version number in Binary Coded Decimal format: 0xJJMN where JJ: major, M: minor, N: sub-minor version number.</p>
+<p>Default: XMOS USB Audio Release version (e.g. 0x0651 for 6.5.1)</p>
+</li>
+
+</ul></div><h3 id="stream-formats">Stream Formats</h3>
+<div><h4 id="output-playback">Output/Playback</h4>
+<div><ul class='lib'><li class="macro">
+<h2 id="OUTPUT_FORMAT_COUNT">
+<tt class="descname">OUTPUT_FORMAT_COUNT</tt></h2>
+<p>Number of supported output stream formats.</p>
+<p>Values 1,2,3 supported</p>
+<p>Default: 2</p>
+</li>
+
+<li class="macro">
+<h2 id="STREAM_FORMAT_OUTPUT_1_RESOLUTION_BITS">
+<tt class="descname">STREAM_FORMAT_OUTPUT_1_RESOLUTION_BITS</tt></h2>
+<p>Sample resolution (bits) of output stream Alternate 1.</p>
+<p>Default: 24 if Alternate 1 is PCM, else 32 if DSD/RAW</p>
+<p>Note, 24 on the lowests alt in case of OUTPUT_FORMAT_COUNT = 1 leaving 24bit as the designs default resolution.</p>
+</li>
+
+<li class="macro">
+<h2 id="STREAM_FORMAT_OUTPUT_2_RESOLUTION_BITS">
+<tt class="descname">STREAM_FORMAT_OUTPUT_2_RESOLUTION_BITS</tt></h2>
+<p>Sample resolution (bits) of output stream Alternate 2.</p>
+<p>Default: 16 if Alternate 2 is PCM, else 32 if DSD/RAW</p>
+</li>
+
+<li class="macro">
+<h2 id="STREAM_FORMAT_OUTPUT_3_RESOLUTION_BITS">
+<tt class="descname">STREAM_FORMAT_OUTPUT_3_RESOLUTION_BITS</tt></h2>
+<p>Sample resolution (bits) of output stream Alternate 3.</p>
+<p>Default: 32 if Alternate 2 is PCM, else 32 if DSD/RAW</p>
+</li>
+
+<li class="macro">
+<h2 id="HS_STREAM_FORMAT_OUTPUT_1_SUBSLOT_BYTES">
+<tt class="descname">HS_STREAM_FORMAT_OUTPUT_1_SUBSLOT_BYTES</tt></h2>
+<p>Sample sub-slot size (bytes) of output stream Alternate 1 when running in high-speed.</p>
+<p>Default: 4 if resolution for Alternate 1 is 24bits, else resolution / 8</p>
+<p>Note, the default catchs the 24bit special case where 4-byte subslot is nicer for our 32-bit machine. Typically do not care about this extra bus overhead at High-speed</p>
+</li>
+
+<li class="macro">
+<h2 id="HS_STREAM_FORMAT_OUTPUT_2_SUBSLOT_BYTES">
+<tt class="descname">HS_STREAM_FORMAT_OUTPUT_2_SUBSLOT_BYTES</tt></h2>
+<p>Sample sub-slot size (bytes) of output stream Alternate 2 when running in high-speed.</p>
+<p>Default: 4 if resolution for Alternate 2 is 24bits, else resolution / 8</p>
+<p>Note, the default catchs the 24bit special case where 4-byte subslot is nicer for our 32-bit machine. Typically do not care about this extra bus overhead at High-speed</p>
+</li>
+
+<li class="macro">
+<h2 id="HS_STREAM_FORMAT_OUTPUT_3_SUBSLOT_BYTES">
+<tt class="descname">HS_STREAM_FORMAT_OUTPUT_3_SUBSLOT_BYTES</tt></h2>
+<p>Sample sub-slot size (bytes) of output stream Alternate 3 when running in high-speed.</p>
+<p>Default: 4 if resolution for Alternate 3 is 24bits, else resolution / 8</p>
+<p>Note, the default catchs the 24bit special case where 4-byte subslot is nicer for our 32-bit machine. Typically do not care about this extra bus overhead at High-speed</p>
+</li>
+
+<li class="macro">
+<h2 id="FS_STREAM_FORMAT_OUTPUT_1_SUBSLOT_BYTES">
+<tt class="descname">FS_STREAM_FORMAT_OUTPUT_1_SUBSLOT_BYTES</tt></h2>
+<p>Sample sub-slot size (bytes) of output stream Alternate 1 when running in full-speed.</p>
+<p>Note, in full-speed mode bus bandwidth is at a premium, therefore pack samples into smallest possible sub-slot.</p>
+<p>Default: STREAM_FORMAT_OUTPUT_1_RESOLUTION_BITS / 8</p>
+</li>
+
+<li class="macro">
+<h2 id="FS_STREAM_FORMAT_OUTPUT_2_SUBSLOT_BYTES">
+<tt class="descname">FS_STREAM_FORMAT_OUTPUT_2_SUBSLOT_BYTES</tt></h2>
+<p>Sample sub-slot size (bytes) of output stream Alternate 2 when running in full-speed.</p>
+<p>Note, in full-speed mode bus bandwidth is at a premium, therefore pack samples into smallest possible sub-slot.</p>
+<p>Default: STREAM_FORMAT_OUTPUT_2_RESOLUTION_BITS / 8</p>
+</li>
+
+<li class="macro">
+<h2 id="FS_STREAM_FORMAT_OUTPUT_3_SUBSLOT_BYTES">
+<tt class="descname">FS_STREAM_FORMAT_OUTPUT_3_SUBSLOT_BYTES</tt></h2>
+<p>Sample sub-slot size (bytes) of output stream Alternate 3 when running in full-speed.</p>
+<p>Note, in full-speed mode bus bandwidth is at a premium, therefore pack samples into smallest possible sub-slot.</p>
+<p>Default: STREAM_FORMAT_OUTPUT_3_RESOLUTION_BITS / 8</p>
+</li>
+
+<li class="macro">
+<h2 id="STREAM_FORMAT_OUTPUT_1_DATAFORMAT">
+<tt class="descname">STREAM_FORMAT_OUTPUT_1_DATAFORMAT</tt></h2>
+<p>Sample audio data-format if output stream Alternate 1.</p>
+<p>Default: UAC_FORMAT_TYPEI_RAW_DATA when Alternate 1 is RAW/DSD else UAC_FORMAT_TYPEI_PCM</p>
+</li>
+
+<li class="macro">
+<h2 id="STREAM_FORMAT_OUTPUT_2_DATAFORMAT">
+<tt class="descname">STREAM_FORMAT_OUTPUT_2_DATAFORMAT</tt></h2>
+<p>Sample audio data-format if output stream Alternate 2.</p>
+<p>Default: UAC_FORMAT_TYPEI_RAW_DATA when Alternate 2 is RAW/DSD else UAC_FORMAT_TYPEI_PCM</p>
+</li>
+
+<li class="macro">
+<h2 id="STREAM_FORMAT_OUTPUT_3_DATAFORMAT">
+<tt class="descname">STREAM_FORMAT_OUTPUT_3_DATAFORMAT</tt></h2>
+<p>Sample audio data-format if output stream Alternate 3.</p>
+<p>Default: UAC_FORMAT_TYPEI_RAW_DATA when Alternate 3 is RAW/DSD else UAC_FORMAT_TYPEI_PCM</p>
+</li>
+
+</ul></div><h4 id="input-recording">Input/Recording</h4>
+<div><ul class='lib'><li class="macro">
+<h2 id="INPUT_FORMAT_COUNT">
+<tt class="descname">INPUT_FORMAT_COUNT</tt></h2>
+<p>Number of supported input stream formats.</p>
+<p>Currenly only 1 supported</p>
+<p>Default: 1</p>
+</li>
+
+<li class="macro">
+<h2 id="STREAM_FORMAT_INPUT_1_RESOLUTION_BITS">
+<tt class="descname">STREAM_FORMAT_INPUT_1_RESOLUTION_BITS</tt></h2>
+<p>Sample resolution (bits) of input stream Alternate 1.</p>
+<p>Default: 24</p>
+</li>
+
+<li class="macro">
+<h2 id="HS_STREAM_FORMAT_INPUT_1_SUBSLOT_BYTES">
+<tt class="descname">HS_STREAM_FORMAT_INPUT_1_SUBSLOT_BYTES</tt></h2>
+<p>Sample sub-slot size (bytes) of input stream Alternate 1 when running in high-speed.</p>
+<p>Default: 4 if resolution for Alternate 1 is 24bits, else resolution / 8</p>
+<p>Note, the default catchs the 24bit special case where 4-byte subslot is nicer for our 32-bit machine. Typically do not care about this extra bus overhead at High-speed</p>
+</li>
+
+<li class="macro">
+<h2 id="FS_STREAM_FORMAT_INPUT_1_SUBSLOT_BYTES">
+<tt class="descname">FS_STREAM_FORMAT_INPUT_1_SUBSLOT_BYTES</tt></h2>
+<p>Sample sub-slot size (bytes) of input stream Alternate 1 when running in full-speed.</p>
+<p>Note, in full-speed mode bus bandwidth is at a premium, therefore pack samples into smallest possible sub-slot.</p>
+<p>Default: STREAM_FORMAT_INPUT_1_RESOLUTION_BITS / 8</p>
+</li>
+
+<li class="macro">
+<h2 id="STREAM_FORMAT_INPUT_1_DATAFORMAT">
+<tt class="descname">STREAM_FORMAT_INPUT_1_DATAFORMAT</tt></h2>
+<p>Sample audio data-format for input stream Alternate 1.</p>
+<p>Default: UAC_FORMAT_TYPEI_PCM</p>
+</li>
+
+</ul></div></div><h3 id="volume-control">Volume Control</h3>
+<div><ul class='lib'><li class="macro">
+<h2 id="OUTPUT_VOLUME_CONTROL">
+<tt class="descname">OUTPUT_VOLUME_CONTROL</tt></h2>
+<p>Enable/disable output volume control including all processing and descriptor support.</p>
+<p>Default: 1 (Enabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="INPUT_VOLUME_CONTROL">
+<tt class="descname">INPUT_VOLUME_CONTROL</tt></h2>
+<p>Enable/disable input volume control including all processing and descriptor support.</p>
+<p>Default: 1 (Enabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="MIN_VOLUME">
+<tt class="descname">MIN_VOLUME</tt></h2>
+<p>The minimum volume setting above -inf.</p>
+<p>This is a signed 8.8 fixed point number that must be strictly greater than -128 (0x8000)</p>
+<p>Default: 0x8100 (-127db)</p>
+</li>
+
+<li class="macro">
+<h2 id="MAX_VOLUME">
+<tt class="descname">MAX_VOLUME</tt></h2>
+<p>The maximum volume setting.</p>
+<p>This is a signed 8.8 fixed point number.</p>
+<p>Default: 0x0000 (0db)</p>
+</li>
+
+<li class="macro">
+<h2 id="VOLUME_RES">
+<tt class="descname">VOLUME_RES</tt></h2>
+<p>The resolution of the volume control in db as a 8.8 fixed point number.</p>
+<p>Default: 0x100 (1db)</p>
+</li>
+
+</ul></div><h3 id="mixing-parameters">Mixing Parameters</h3>
+<div><ul class='lib'><li class="macro">
+<h2 id="MIXER">
+<tt class="descname">MIXER</tt></h2>
+<p>Enable &#8220;mixer&#8221; core.</p>
+<p>Default: 0 (Disabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="MAX_MIX_COUNT">
+<tt class="descname">MAX_MIX_COUNT</tt></h2>
+<p>Number of seperate mixes to perform.</p>
+<p>Default: 8 if MIXER enabled, else 0</p>
+</li>
+
+<li class="macro">
+<h2 id="MIX_INPUTS">
+<tt class="descname">MIX_INPUTS</tt></h2>
+<p>Number of channels input into the mixer.</p>
+<p>Note, total number of mixer nodes is MIX_INPUTS * MAX_MIX_COUNT</p>
+<p>Default: 18</p>
+</li>
+
+<li class="macro">
+<h2 id="MIN_MIXER_VOLUME">
+<tt class="descname">MIN_MIXER_VOLUME</tt></h2>
+<p>The minimum volume setting for the mixer unit above -inf.</p>
+<p>This is a signed 8.8 fixed point number that must be strictly greater than -128 (0x8000)</p>
+<p>Default: 0x8100 (-127db)</p>
+</li>
+
+<li class="macro">
+<h2 id="MAX_MIXER_VOLUME">
+<tt class="descname">MAX_MIXER_VOLUME</tt></h2>
+<p>The maximum volume setting for the mixer.</p>
+<p>This is a signed 8.8 fixed point number.</p>
+<p>Default: 0x0000 (0db)</p>
+</li>
+
+<li class="macro">
+<h2 id="VOLUME_RES_MIXER">
+<tt class="descname">VOLUME_RES_MIXER</tt></h2>
+<p>The resolution of the volume control in db as a 8.8 fixed point number.</p>
+<p>Default: 0x100 (1db)</p>
+</li>
+
+</ul></div><h3 id="power">Power</h3>
+<div><ul class='lib'><li class="macro">
+<h2 id="SELF_POWERED">
+<tt class="descname">SELF_POWERED</tt></h2>
+<p>Report as self to the host when enabled, else reports as bus-powered.</p>
+<p>This affects descriptors and XUD usage.</p>
+<p>Default: 0 (Disabled)</p>
+</li>
+
+<li class="macro">
+<h2 id="BMAX_POWER">
+<tt class="descname">BMAX_POWER</tt></h2>
+<p>Power drawn from the host (in mA x 2).</p>
+<p>Default: 0 when SELF_POWERED enabled else 250 (500mA)</p>
+</li>
+
+</ul></div></div><span id="document-api_user_functions"></span><h2 class="topic" id="required-user-function-definitions">Required User Function Definitions</h2>
+<div><p>The following functions need to be defined by an application using the XMOS USB Audio framework.</p>
+<h3 id="external-audio-hardware-configuration-functions">External Audio Hardware Configuration Functions</h3>
+<div><ul class='lib'><li class="function">
+<h2 id="AudioHwInit">
+void <tt class="descname">AudioHwInit</tt><big>(</big>chanend<em>&nbsp;?c_codec</em><big>)</big></h2>
+<p>This function is called when the audio core starts after the
+device boots up and should initialize the external audio harware e.g. clocking, DAC, ADC etc</p>
+<h4 class="nosecnum compact" id="">Parameters</h4>
+<div><ul class="field_list" class="latex_compact"><li><h2>c_codec</h2>
+<p>An optional chanend that was original passed into
+<a class="reference" href="page3.html#audio" title="audio"><span>audio()</span></a>
+ that can be used to communicate
+with other cores.</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="AudioHwConfig">
+void <tt class="descname">AudioHwConfig</tt><big>(</big>unsigned<em>&nbsp;samFreq</em>, unsigned<em>&nbsp;mclk</em>, chanend<em>&nbsp;?c_codec</em>, unsigned<em>&nbsp;dsdMode</em>, unsigned<em>&nbsp;sampRes_DAC</em>, unsigned<em>&nbsp;sampRes_ADC</em><big>)</big></h2>
+<p>This function is called when the audio core starts or changes
+sample rate. It should configure the extenal audio hardware to run at the specified
+sample rate given the supplied master clock frequency.</p>
+<h4 class="nosecnum compact" id="">Parameters</h4>
+<div><ul class="field_list" class="latex_compact"><li><h2>samFreq</h2>
+<p>The sample frequency in Hz that the hardware should be configured to (in Hz).</p>
+</li>
+<li><h2>mclk</h2>
+<p>The master clock frequency that is required in Hz.</p>
+</li>
+<li><h2>c_codec</h2>
+<p>An optional chanend that was original passed into
+<a class="reference" href="page3.html#audio" title="audio"><span>audio()</span></a>
+ that can be used to communicate
+with other cores.</p>
+</li>
+<li><h2>dsdMode</h2>
+<p>Signifies if the audio hardware should be configured for DSD operation</p>
+</li>
+<li><h2>sampRes_DAC</h2>
+<p>The sample resolution of the DAC stream</p>
+</li>
+<li><h2>sampRes_ADC</h2>
+<p>The sample resolution of the ADC stream</p>
+</li>
+</ul>
+</div></li>
+
+</ul></div><h3 id="audio-streaming-functions">Audio Streaming Functions</h3>
+<div><p>The following functions can be optionally used by the design. They can be useful for mute lines etc.</p>
+<ul class='lib'><li class="function">
+<h2 id="AudioStreamStart">
+void <tt class="descname">AudioStreamStart</tt><big>(</big>void<big>)</big></h2>
+<p>This function is called when the audio stream from device to host
+starts.</p>
+</li>
+
+<li class="function">
+<h2 id="AudioStreamStop">
+void <tt class="descname">AudioStreamStop</tt><big>(</big>void<big>)</big></h2>
+<p>This function is called when the audio stream from device to host stops.</p>
+</li>
+
+</ul></div><h3 id="host-active">Host Active</h3>
+<div><p>The following function can be used to signal that the device is connected to a valid host.</p>
+<p>This is called on a change in state.</p>
+<ul class='lib'><li class="function">
+<h2>
+void <tt class="descname">AudioStreamStart</tt><big>(</big>int<em>&nbsp;active</em><big>)</big></h2>
+<h4 class="nosecnum compact" id="">Parameters</h4>
+<div><ul class="field_list" class="latex_compact"><li><h2>active</h2>
+<p>Indicates if the host is active or not. 1 for active else 0.</p>
+</li>
+</ul>
+</div></li>
+
+</ul></div><h3 id="hid-controls">HID Controls</h3>
+<div><p>The following function is called when the device wishes to read physical user input (buttons etc).</p>
+<ul class='lib'><li class="function">
+<h2 id="UserReadHIDButtons">
+void <tt class="descname">UserReadHIDButtons</tt><big>(</big>unsigned char<em>&nbsp;hidData[]</em><big>)</big></h2>
+<h4 class="nosecnum compact" id="">Parameters</h4>
+<div><ul class="field_list" class="latex_compact"><li><h2>hidData</h2>
+<p>The function should write relevant HID bits into this array. The bit ordering and functionality is defined by the HID report descriptor used.</p>
+</li>
+</ul>
+</div></li>
+
+</ul></div></div><span id="document-api_component"></span><h2 class="topic" id="component-api"><span id="usb-audio-sec-component-api"></span>Component API</h2>
+<div><p>The following functions can be called from the top level main of an
+application and implement the various components described in
+<a class="reference" href="page2.html#usb-audio-sec-architecture"><span>The USB Audio System Architecture</span></a>.</p>
+<ul class='lib'><li class="function">
+<h2 id="XUD_Manager">
+int <tt class="descname">XUD_Manager</tt><big>(</big>chanend<em>&nbsp;c_epOut[]</em>, int<em>&nbsp;noEpOut</em>, chanend<em>&nbsp;c_epIn[]</em>, int<em>&nbsp;noEpIn</em>, chanend<em>&nbsp;?c_sof</em>, XUD_EpType<em>&nbsp;epTypeTableOut[]</em>, XUD_EpType<em>&nbsp;epTypeTableIn[]</em>, out port<em>&nbsp;?p_usb_rst</em>, clock<em>&nbsp;?clk</em>, unsigned<em>&nbsp;rstMask</em>, XUD_BusSpeed_t<em>&nbsp;desiredSpeed</em>, XUD_PwrConfig<em>&nbsp;pwrConfig</em><big>)</big></h2>
+<p>This performs the low-level USB I/O operations.</p>
+<p>Note that this needs to run in a thread with at least 80 MIPS worst case execution speed.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>c_epOut</h2>
+<p>An array of channel ends, one channel end per output endpoint (USB OUT transaction); this includes a channel to obtain requests on Endpoint 0.</p>
+</li>
+<li><h2>noEpOut</h2>
+<p>The number of output endpoints, should be at least 1 (for Endpoint 0).</p>
+</li>
+<li><h2>c_epIn</h2>
+<p>An array of channel ends, one channel end per input endpoint (USB IN transaction); this includes a channel to respond to requests on Endpoint 0.</p>
+</li>
+<li><h2>noEpIn</h2>
+<p>The number of input endpoints, should be at least 1 (for Endpoint 0).</p>
+</li>
+<li><h2>c_sof</h2>
+<p>A channel to receive SOF tokens on. This channel must be connected to a process that can receive a token once every 125 ms. If tokens are not read, the USB layer will lock up. If no SOF tokens are required <tt class="docutils literal"><span class="pre">null</span></tt> should be used for this parameter.</p>
+</li>
+<li><h2>epTypeTableOut</h2>
+<p>See <tt class="docutils literal"><span class="pre">epTypeTableIn</span></tt>.</p>
+</li>
+<li><h2>epTypeTableIn</h2>
+<p>This and <tt class="docutils literal"><span class="pre">epTypeTableOut</span></tt> are two arrays indicating the type of the endpoint. Legal types include: <tt class="docutils literal"><span class="pre">XUD_EPTYPE_CTL</span></tt> (Endpoint 0), <tt class="docutils literal"><span class="pre">XUD_EPTYPE_BUL</span></tt> (Bulk endpoint), <tt class="docutils literal"><span class="pre">XUD_EPTYPE_ISO</span></tt> (Isochronous endpoint), <tt class="docutils literal"><span class="pre">XUD_EPTYPE_INT</span></tt> (Interrupt endpoint), <tt class="docutils literal"><span class="pre">XUD_EPTYPE_DIS</span></tt> (Endpoint not used). The first array contains the endpoint types for each of the OUT endpoints, the second array contains the endpoint types for each of the IN endpoints.</p>
+</li>
+<li><h2>p_usb_rst</h2>
+<p>The port to used to connect to an external phy reset line. Should be <tt class="docutils literal"><span class="pre">null</span></tt> for U-Series.</p>
+</li>
+<li><h2>clk</h2>
+<p>The clock block to use for the p_usb_rst port - this should not be clock block 0. Should be <tt class="docutils literal"><span class="pre">null</span></tt> for U-Series.</p>
+</li>
+<li><h2>rstMask</h2>
+<p>The mask to use when taking an external phy into/out of reset. The mask is ORed into the port to disable reset, and unset when deasserting reset. Use &#8216;-1&#8217; as a default mask if this port is not shared.</p>
+</li>
+<li><h2>desiredSpeed</h2>
+<p>This parameter specifies what speed the device will attempt to run at i.e. full-speed (ie 12Mbps) or high-speed (480Mbps) if supported by the host. Pass <tt class="docutils literal"><span class="pre">XUD_SPEED_HS</span></tt> if high-speed is desired or <tt class="docutils literal"><span class="pre">XUD_SPEED_FS</span></tt> if not. Low speed USB is not supported by XUD.</p>
+</li>
+<li><h2>pwrConfig</h2>
+<p>Specifies whether the device is bus or self-powered. When self-powered the XUD will monitor the VBUS line for host disconnections. This is required for compliance reasons. Valid values are XUD_PWR_SELF and XUD_PWR_BUS.</p>
+</li>
+</ul>
+</div></li>
+
+</ul><p>When using the USB audio framework the <tt class="docutils literal"><span class="pre">c_ep_in</span></tt> array is always
+composed in the following order:</p>
+<blockquote>
+<div><ul>
+<li>Endpoint 0 (in)</li>
+<li>Audio Feedback endpoint (if output enabled)</li>
+<li>Audio IN endpoint (if input enabled)</li>
+<li>MIDI IN endpoint (if MIDI enabled)</li>
+<li>Clock Interrupt endpoint</li>
+</ul>
+</div></blockquote>
+<p>The array <tt class="docutils literal"><span class="pre">c_ep_out</span></tt> is always composed in the following order:</p>
+<blockquote>
+<div><ul>
+<li>Endpoint 0 (out)</li>
+<li>Audio OUT endpoint (if output enabled)</li>
+<li>MIDI OUT endpoint (if MIDI enabled)</li>
+</ul>
+</div></blockquote>
+<ul class='lib'><li class="function">
+<h2 id="Endpoint0">
+void <tt class="descname">Endpoint0</tt><big>(</big>chanend<em>&nbsp;c_ep0_out</em>, chanend<em>&nbsp;c_ep0_in</em>, chanend<em>&nbsp;c_audioCtrl</em>, chanend<em>&nbsp;?c_mix_ctl</em>, chanend<em>&nbsp;?c_clk_ctl</em><big>)</big></h2>
+<p>Function implementing Endpoint 0 for enumeration, control and configuration of USB audio devices.</p>
+<p>It uses the descriptors defined in <tt class="docutils literal"><span class="pre">descriptors_2.h</span></tt>.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>c_ep0_out</h2>
+<p>Chanend connected to the <a class="reference" href="page3.html#XUD_Manager" title="XUD_Manager"><span>XUD_Manager()</span></a>
+ out endpoint array</p>
+</li>
+<li><h2>c_ep0_in</h2>
+<p>Chanend connected to the <a class="reference" href="page3.html#XUD_Manager" title="XUD_Manager"><span>XUD_Manager()</span></a>
+ in endpoint array</p>
+</li>
+<li><h2>c_audioCtrl</h2>
+<p>Chanend connected to the decouple thread for control audio (sample rate changes etc.)</p>
+</li>
+<li><h2>c_mix_ctl</h2>
+<p>Optional chanend to be connected to the mixer thread if present</p>
+</li>
+<li><h2>c_clk_ctl</h2>
+<p>Optional chanend to be connected to the clockgen thread if present.</p>
+</li>
+<li><h2>c_usb_test</h2>
+<p>Optional chanend to be connected to XUD if test modes required.</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="buffer">
+void <tt class="descname">buffer</tt><big>(</big>chanend<em>&nbsp;c_aud_out</em>, chanend<em>&nbsp;c_aud_in</em>, chanend<em>&nbsp;c_aud_fb</em>, chanend<em>&nbsp;c_sof</em>, chanend<em>&nbsp;c_aud_ctl</em>, in port<em>&nbsp;p_off_mclk</em><big>)</big></h2>
+<p>USB Audio Buffering Thread.</p>
+<p>This function buffers USB audio data between the XUD layer and the decouple thread. Most of the chanend parameters to the function should be connected to <a class="reference" href="page3.html#XUD_Manager" title="XUD_Manager"><span>XUD_Manager()</span></a></p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>c_aud_out</h2>
+<p>Audio OUT endpoint channel connected to the XUD</p>
+</li>
+<li><h2>c_aud_in</h2>
+<p>Audio IN endpoint channel connected to the XUD</p>
+</li>
+<li><h2>c_aud_fb</h2>
+<p>Audio feedback endpoint channel connected to the XUD</p>
+</li>
+<li><h2>c_midi_from_host</h2>
+<p>MIDI OUT endpoint channel connected to the XUD</p>
+</li>
+<li><h2>c_midi_to_host</h2>
+<p>MIDI IN endpoint channel connected to the XUD</p>
+</li>
+<li><h2>c_int</h2>
+<p>Audio clocking interrupt endpoint channel connected to the XUD</p>
+</li>
+<li><h2>c_sof</h2>
+<p>Start of frame channel connected to the XUD</p>
+</li>
+<li><h2>c_aud_ctl</h2>
+<p>Audio control channel connected to <a class="reference" href="page3.html#Endpoint0" title="Endpoint0"><span>Endpoint0()</span></a>
+</p>
+</li>
+<li><h2>p_off_mclk</h2>
+<p>A port that is clocked of the MCLK input (not the MCLK input itself)</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="decouple">
+void <tt class="descname">decouple</tt><big>(</big>chanend<em>&nbsp;c_audio_out</em>, chanend<em>&nbsp;?c_clk_int</em><big>)</big></h2>
+<p>Manage the data transfer between the USB audio buffer and the Audio I/O driver.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>c_audio_out</h2>
+<p>Channel connected to the <a class="reference" href="page3.html#audio" title="audio"><span>audio()</span></a>
+ or <a class="reference" href="page3.html#mixer" title="mixer"><span>mixer()</span></a>
+ threads</p>
+</li>
+<li><h2>c_clk_int</h2>
+<p>Optional chanend connected to the <a class="reference" href="page3.html#clockGen" title="clockGen"><span>clockGen()</span></a>
+ thread if present</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="mixer">
+void <tt class="descname">mixer</tt><big>(</big>chanend<em>&nbsp;c_to_host</em>, chanend<em>&nbsp;c_to_audio</em>, chanend<em>&nbsp;c_mix_ctl</em><big>)</big></h2>
+<p>Digital sample mixer.</p>
+<p>This thread mixes audio streams between the <a class="reference" href="page3.html#decouple" title="decouple"><span>decouple()</span></a> thread and the <a class="reference" href="page3.html#audio" title="audio"><span>audio()</span></a> thread.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>c_to_host</h2>
+<p>a chanend connected to the <a class="reference" href="page3.html#decouple" title="decouple"><span>decouple()</span></a>
+ thread for receiving/transmitting samples</p>
+</li>
+<li><h2>c_to_audio</h2>
+<p>a chanend connected to the <a class="reference" href="page3.html#audio" title="audio"><span>audio()</span></a>
+ thread for receiving/transmitting samples</p>
+</li>
+<li><h2>c_mix_ctl</h2>
+<p>a chanend connected to the <a class="reference" href="page3.html#Endpoint0" title="Endpoint0"><span>Endpoint0()</span></a>
+ thread for receiving control commands</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="audio">
+void <tt class="descname">audio</tt><big>(</big>chanend<em>&nbsp;c_in</em>, chanend<em>&nbsp;?c_dig</em>, chanend<em>&nbsp;?c_config</em>, chanend<em>&nbsp;?c_adc</em><big>)</big></h2>
+<p>The audio driver thread.</p>
+<p>This function drives I2S ports and handles samples to/from other digital I/O threads.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>c_in</h2>
+<p>Audio sample channel connected to the <a class="reference" href="page3.html#mixer" title="mixer"><span>mixer()</span></a>
+ thread or the <a class="reference" href="page3.html#decouple" title="decouple"><span>decouple()</span></a>
+ thread</p>
+</li>
+<li><h2>c_dig</h2>
+<p>channel connected to the <a class="reference" href="page3.html#clockGen" title="clockGen"><span>clockGen()</span></a>
+ thread for receiving/transmitting samples</p>
+</li>
+<li><h2>c_config</h2>
+<p>An optional channel that will be passed on to the CODEC configuration functions.</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="clockGen">
+void <tt class="descname">clockGen</tt><big>(</big>streaming chanend<em>&nbsp;c_spdif_rx</em>, chanend<em>&nbsp;c_adat_rx</em>, out port<em>&nbsp;p</em>, chanend<em>&nbsp;c_audio</em>, chanend<em>&nbsp;c_clk_ctl</em>, chanend<em>&nbsp;c_clk_int</em><big>)</big></h2>
+<p>Clock generation and digital audio I/O handling.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>c_spdif_rx</h2>
+<p>channel connected to S/PDIF receive thread</p>
+</li>
+<li><h2>c_adat_rx</h2>
+<p>channel connect to ADAT receive thread</p>
+</li>
+<li><h2>p</h2>
+<p>port to output clock signal to drive external frequency synthesizer</p>
+</li>
+<li><h2>c_audio</h2>
+<p>channel connected to the <a class="reference" href="page3.html#audio" title="audio"><span>audio()</span></a>
+ thread</p>
+</li>
+<li><h2>c_clk_ctl</h2>
+<p>channel connected to <a class="reference" href="page3.html#Endpoint0" title="Endpoint0"><span>Endpoint0()</span></a>
+ for configuration of the clock</p>
+</li>
+<li><h2>c_clk_int</h2>
+<p>channel connected to the <a class="reference" href="page3.html#decouple" title="decouple"><span>decouple()</span></a>
+ thread for clock interrupts</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="SpdifReceive">
+void <tt class="descname">SpdifReceive</tt><big>(</big>in buffered port:4<em>&nbsp;p</em>, streaming chanend<em>&nbsp;c</em>, int<em>&nbsp;initial_divider</em>, clock<em>&nbsp;clk</em><big>)</big></h2>
+<p>S/PDIF receive function.</p>
+<p>This function needs 1 thread and no memory other than ~2800 bytes of program code. It can do 11025, 12000, 22050, 24000, 44100, 48000, 88200, 96000, and 192000 Hz. When the decoder encounters a long series of zeros it will lower the divider; when it encounters a short series of 0-1 transitions it will increase the divider.</p>
+<p>Output: the received 24-bit sample values are output as a word on the streaming channel end. Each value is shifted up by 4-bits with the bottom four bits being one of FRAME_X, FRAME_Y, or FRAME_Z. The bottom four bits should be removed whereupon the sample value should be sign extended.</p>
+<p>The function does not return unless compiled with TEST defined in which case it returns any time that it loses synchronisation.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>p</h2>
+<p>S/PDIF input port. This port must be 4-bit buffered, declared as <tt class="docutils literal"><span class="pre">in</span> <span class="pre">buffered</span> <span class="pre">port:4</span></tt></p>
+</li>
+<li><h2>c</h2>
+<p>channel to output samples to</p>
+</li>
+<li><h2>initial_divider</h2>
+<p>initial divide for initial estimate of sample rate For a 100Mhz reference clock, use an initial divider of 1 for 192000, 2 for 96000/88200, and 4 for 48000/44100.</p>
+</li>
+<li><h2>clk</h2>
+<p>clock block sourced from the 100 MHz reference clock.</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="adatReceiver48000">
+void <tt class="descname">adatReceiver48000</tt><big>(</big>buffered in port:32<em>&nbsp;p</em>, chanend<em>&nbsp;oChan</em><big>)</big></h2>
+<p>ADAT Receive Thread (48kHz sample rate).</p>
+<p>The function will return if it cannot lock onto a 44,100/48,000 Hz signal. Normally the 48000 function is called in a while(1) loop. If both 44,100 and 48,000 need to be supported, they should be called in sequence in a while(1) loop. Note that the functions are large, and that 44,100 should not be called if it does not need to be supported.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>p</h2>
+<p>ADAT port - should be 1-bit and clocked at 100MHz</p>
+</li>
+<li><h2>oChan</h2>
+<p>channel on which decoded samples are output</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="adatReceiver44100">
+void <tt class="descname">adatReceiver44100</tt><big>(</big>buffered in port:32<em>&nbsp;p</em>, chanend<em>&nbsp;oChan</em><big>)</big></h2>
+<p>ADAT Receive Thread (44.1kHz sample rate).</p>
+<p>The function will return if it cannot lock onto a 44,100/48,000 Hz signal. Normally the 48000 function is called in a while(1) loop. If both 44,100 and 48,000 need to be supported, they should be called in sequence in a while(1) loop. Note that the functions are large, and that 44,100 should not be called if it does not need to be supported.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>p</h2>
+<p>ADAT port - should be 1-bit and clocked at 100MHz</p>
+</li>
+<li><h2>oChan</h2>
+<p>channel on which decoded samples are output</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="usb_midi">
+void <tt class="descname">usb_midi</tt><big>(</big>buffered in port:1<em>&nbsp;?p_midi_in</em>, port<em>&nbsp;?p_midi_out</em>, clock<em>&nbsp;?clk_midi</em>, chanend<em>&nbsp;?c_midi</em>, unsigned<em>&nbsp;cable_number</em>, chanend<em>&nbsp;?c_iap</em>, chanend<em>&nbsp;?c_i2c</em>, port<em>&nbsp;?p_scl</em>, port<em>&nbsp;?p_sda</em><big>)</big></h2>
+<p>USB MIDI I/O thread.</p>
+<p>This function passes MIDI data from USB to UART I/O.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>p_midi_in</h2>
+<p>1-bit input port for MIDI</p>
+</li>
+<li><h2>p_midi_out</h2>
+<p>1-bit output port for MIDI</p>
+</li>
+<li><h2>clk_midi</h2>
+<p>clock block used for clockin the UART; should have a rate of 100MHz</p>
+</li>
+<li><h2>c_midi</h2>
+<p>chanend connected to the <a class="reference" href="page3.html#decouple" title="decouple"><span>decouple()</span></a>
+ thread</p>
+</li>
+<li><h2>cable_number</h2>
+<p>the cable number of the MIDI implementation. This should be set to 0.</p>
+</li>
+</ul>
+</div></li>
+
+</ul></div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page0.html">USB Audio Solution Overview</a></li>
+             <li><a href="page1.html">USB Audio Hardware Platforms</a></li>
+             <li><a href="page2.html">USB Audio Software Architecture</a></li>
+             <li><a href="page6.html">Features & Options</a></li>
+             <li><a href="page4.html">USB Audio Programming Guide</a></li>
+             <li><a href="page5.html">USB Audio Applications</a></li>
+             <li><a href="page7.html">Frequently Asked Questions</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

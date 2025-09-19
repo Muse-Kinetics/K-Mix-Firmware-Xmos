@@ -1,0 +1,35 @@
+# type      		subtype      	buildnum       flags		filepath
+
+# 0 = sharc cpde					0 = normal
+# 1 = 8051 code
+# 2 = xmos version
+# 3 = global version
+
+
+#these are the normal shark versions
+#0 			44100 		0x010035	0	 	sharc_candidates/KMIX_21489_DSP_44p1KHz_1.0.35.ldr
+#0 			48000 		0x010035	0	 	sharc_candidates/KMIX_21489_DSP_48KHz_1.0.35.ldr
+#0 			88200 		0x010035	0	 	sharc_candidates/KMIX_21489_DSP_88p2KHz_1.0.35.ldr
+#0			96000		0x010035	0	 	sharc_candidates/KMIX_21489_DSP_96KHz_1.0.35.ldr
+
+0			44100		0x010035	0	 	sharc_candidates/debug/wait/KMIX_21489_DSP_44p1KHz.ldr
+0			48000		0x010035	0	 	sharc_candidates/debug/wait/KMIX_21489_DSP_48KHz.ldr
+0			88200		0x010035	0	 	sharc_candidates/debug/wait/KMIX_21489_DSP_88p2KHz.ldr
+0			96000		0x010035	0	 	sharc_candidates/debug/wait/KMIX_21489_DSP_96KHz.ldr
+
+#0			44100		0x010035	0	 	sharc_candidates/debug/misc/KMIX_sine_to_codec&dac&USB.ldr
+#0			48000		0x010035	0	 	sharc_candidates/debug/misc/KMIX_sine_to_codec&dac&USB.ldr
+#0			88200		0x010035	0	 	sharc_candidates/debug/misc/KMIX_sine_to_codec&dac&USB.ldr
+#0			96000		0x010035	0	 	sharc_candidates/debug/misc/KMIX_sine_to_codec&dac&USB.ldr
+
+
+
+
+#non sharc items
+1			0		0x20116		0	 	8051_candidates/0909_K_MIX_Firmware_v2.1.16.bin
+1			1		0x20115		0	 	8051_candidates/0908_K-Mix_Firmware_v2.1.15.bin
+1			2		0		0		8051_candidates/flashdebug.bin
+2			0		0x0100		0
+3			0		0x010000	0
+
+

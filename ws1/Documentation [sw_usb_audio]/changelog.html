@@ -1,0 +1,993 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>sw_usb_audio Change Log &mdash; XMOS USB Audio 2.0 Reference Design README v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="XMOS USB Audio 2.0 Reference Design README v documentation" href="index.html" />
+    <link rel="prev" title="XMOS USB Audio 2.0 Reference Design README" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>sw_usb_audio Change Log</h1>
+
+             <div class='columns'>
+            
+  <h2 class="topic" id="id1">6.6.0</h2>
+<div><blockquote>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Added app_usb_aud_skc_u16_audio8 application for XP-SKC-U16 with XA-SK-AUDIO8</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Support for XA-SK-USB-BLC 1V2 USB slice in app_usb_aud_xk_u8_2c and</dt>
+<dd><p>app_usb_aud_skc_u16 (1V1 slices will not operate correctly without software
+modification)</p>
+</dd>
+</dl>
+</li>
+<li>CHANGE:     Removed app_usb_aud_su1</li>
+<li>CHANGE:     Endpoint 0 code updated to support new XUD test-mode enable API</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Macs operation for volume processing in mixer core now retains lower bits when</dt>
+<dd><p>device configured to use either 32bit samples or Native DSD.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) DFU_FLASH_DEVICE define corrected in app_usb_aud_skc_u16. Previously an</dt>
+<dd><p>incorrect SPI spec was defined causing DFU to fail for this example application.</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) HID descriptor properly defined when HID_CONTROLS enabled</li>
+</ul>
+</div></blockquote>
+<ul>
+<li>Changes to dependencies:<ul>
+<li>sc_xud: 2.0.1rc3 -&gt; 2.1.1rc0<ul>
+<li>ADDED:      Warning emitted when number of cores is greater than 6</li>
+<li>CHANGE:     XUD no longer takes a additional chanend parameter for enabling USB test-modes.</li>
+</ul>
+</li>
+<li>sc_usb_audio: 6.5.1rc4 -&gt; 6.6.0rc2<ul>
+<li>see sw_usb_audio for changelog</li>
+</ul>
+</li>
+<li>sc_usb_device: 1.2.2rc4 -&gt; 1.3.0rc0<ul>
+<li>CHANGE:  Required updates for XUD API change relating to USB test-mode-support</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id2">6.5.1</h2>
+<div><blockquote>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Added USB Design Guide to this repo including major update (see /doc)</li>
+<li>ADDED:      Added MIDI_RX_PORT_WIDTH define such that a 4-bit port can be used for MIDI Rx</li>
+<li><dl class="docutils">
+<dt>CHANGE:     I2S data to clock edge setup time improvements when BCLK = MCLK (particularly</dt>
+<dd><p>when running at 384kHz with a 24.576MHz master-clock)</p>
+</dd>
+</dl>
+</li>
+<li>CHANGE:     String table rationalisation (now based on a structure rather than a global array)</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Channel strings now set at build-time (rather than run-time) avoiding the use</dt>
+<dd><p>of memcpy</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Re-added c_aud_cfg channel (guarded by AUDIO_CFG_CHAN) allowing easy communication</dt>
+<dd><p>of audio hardware config to a remote core</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Channel strings now labeled &#8220;Analogue X, SPDIF Y&#8221; if S/PDIF and Analogue channels</dt>
+<dd><p>overlap (previously Analogue naming took precedence)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Stream sample resolution now passed though to audio I/O core - previously only the</dt>
+<dd><p>buffering code was notified. AudioHwConfig() now takes parameters for sample
+resolution for DAC and ADC</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Endpoint0 core only sends out notifications of stream format change on stream start</dt>
+<dd><p>event if there is an actual change in format (e.g. 16bit to 24bit or PCM to DSD).
+This avoids unnecessary audio I/O restarts and reconfiguration of external audio
+hardware (via AudioHwConfig())</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>CHANGE:     All occurances of historical INPUT and OUTPUT defines now removed. NUM_USB_CHAN_IN</dt>
+<dd><p>and NUM_USB_CHAN_OUT now used throughout the codebase.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) USB test mode requests re-enabled - previously was guarded by</dt>
+<dd><p>TEST_MODE_SUPPORT in module_usb_device (#15385)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Audio Class 1.0 sample frequency list now respects MAX_FREQ (previously</dt>
+<dd><p>based on OUTPUT and INPUT defines) (#15417)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Audio Class 1.0 mute control SET requests stalled due to incorrect data</dt>
+<dd><p>length check (#15419)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED    (Minor) DFU Upload request now functional (Returns current upgrade image to host)</dt>
+<dd><p>(#151571)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<ul>
+<li>Changes to dependencies:<ul>
+<li>sc_spdif: 1.3.1beta3 -&gt; 1.3.2rc2</li>
+<li>sc_i2c: 2.4.0beta1 -&gt; 2.4.1rc1</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>.</dt>
+<dd><blockquote class="first">
+<div><ul>
+<li>module_i2c_simple header-file comments updated to correctly reflect API</li>
+</ul>
+</div></blockquote>
+<ul class="last">
+<li>sc_usb_audio: 6.5.0beta2 -&gt; 6.5.1rc4<ul>
+<li>see sw_usb_audio for changelog</li>
+</ul>
+</li>
+<li>sc_usb_device: 1.1.0beta0 -&gt; 1.2.2rc4<ul>
+<li>sc_util: 1.0.3rc0 -&gt; 1.0.4rc0</li>
+<li>module_logging now compiled at -Os</li>
+<li>debug_printf in module_logging uses a buffer to deliver messages unfragmented</li>
+<li>Fix thread local storage calculation bug in libtrycatch</li>
+<li>Fix debug_printf itoa to work for unsigned values &gt; 0x80000000</li>
+</ul>
+</li>
+<li>sc_util: 1.0.3rc0 -&gt; 1.0.4rc0<ul>
+<li>module_logging now compiled at -Os</li>
+<li>debug_printf in module_logging uses a buffer to deliver messages unfragmented</li>
+<li>Fix thread local storage calculation bug in libtrycatch</li>
+<li>Fix debug_printf itoa to work for unsigned values &gt; 0x80000000</li>
+</ul>
+</li>
+<li>sc_xud: 2.0.0beta1 -&gt; 2.0.1rc3<ul>
+<li>RESOLVED:   (Minor) Error when building module_xud in xTimeComposer due to invalid project</li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</div><h2 class="topic" id="id3">6.5.0</h2>
+<div><blockquote>
+<div><ul>
+<li>CHANGE:     USB Test mode support enabled by default (required for compliance testing)</li>
+<li>CHANGE:     Default full-speed behaviour is now Audio Class 2, previously was a null device</li>
+<li>CHANGE:     Various changes to use XUD_Result_t returned from XUD functions</li>
+<li><dl class="docutils">
+<dt>CHANGE:     All remaining references to ARCH_x defines removed. XUD_SERIES_SUPPORT should</dt>
+<dd><p>now be used (#15270)</p>
+</dd>
+</dl>
+</li>
+<li>CHANGE:     Added IAP_TILE and MIDI_TILE defines (default to AUDIO_IO_TILE) (#15271)</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Multiple output stream formats now supported. See OUTPUT_FORMAT_COUNT and</dt>
+<dd><p>various _STREAM_FORMAT_OUTPUT_ defines. This allows dynamically selectable streaming
+interfaces with different formats e.g. sub-slot size, resolution etc. 16bit and
+24bit enabled by default</p>
+</dd>
+</dl>
+</li>
+<li>CHANGE:     Audio buffering code now handles different slot size for input/output streams</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Endpoint 0 code now in standard C (rather than XC) to allow better use of packed</dt>
+<dd><p>structures for descriptors</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Use of structures/enums/headers in module_usb_shared to give more modular Audio</dt>
+<dd><p>Class 2.0 descriptors that can be more easily modified at run-time</p>
+</dd>
+</dl>
+</li>
+<li>CHANGE:     16bit audio buffer packing/unpacking optimised</li>
+<li>RESOLVED:   (Minor) All access to port32A now guarded by locks in app_usb_aud_xk_u8_2c</li>
+<li>RESOLVED:   (Minor) iAP interface string index in descriptors when MIXER enabled (#15257)</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) First feedback packet could be the wrong size (3 vs 4 byte) after a bus-</dt>
+<dd><p>speed change. usb_buffer() core now explicitly re-sizes initial feedback packet
+on stream-start based on bus-speed</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Preprocessor error when AUDIO_CLASS_FALLBACK enabled and FULL_SPEED_AUDIO_2</dt>
+<dd><p>not defined. FULL_SPEED_AUDIO_2 now only enabled by default if AUDIO_CLASS_FALLBACK
+is not enabled (#15272)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) XUD_STATUS_ENABLED set for iAP IN endpoints (and disabled for OUT</dt>
+<dd><p>endpoint) to avoid potential stale buffer being transmitted after bus-reset.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id4">6.4.1</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) MIDI on single-tile L series devices now functional. CLKBLK_REF no longer used</dt>
+<dd><p>for MIDI when running on the same tile as XUD_Manager()</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id5">6.4.0</h2>
+<div><blockquote>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      XK-USB-AUDIO-U8-2C mute output driven high when audiostream not active (app_usb_aud_xk_u8_2c)</li>
+<li>CHANGE:     MIDI ports no longer passed to MFi specific functions</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Audio delivery core no longer waits for AUDIO_PLL_LOCK_DELAY after calling AudioHwConfig()</dt>
+<dd><p>and running audio interfaces. It should be ensured that AudioHwConfig() implementation
+should handle any delays required for stable MCLK as required by the clocking hardware.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>CHANGE:     Delay to allow USB feedback to stabilise after sample-rate change now based on USB bus</dt>
+<dd><p>speed. This allows faster rate change at high-speed.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>CHANGE:     <a href="#id49"><span class="problematic" id="id50">FL_DEVICE_</span></a> flash spec macros (from flash.h) used for DFU_FLASH_DEVICE define where appropriate</dt>
+<dd><p>rather than defining the spec manually</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Major) Broken (noisy) playback in DSD native mode (introduced in 6.3.2). Caused by 24bit</dt>
+<dd><p>(over 32bit) volume processing when DSD enabled - DSD bits are lost. 24bit volume control
+now guarded by NATIVE_DSD define (#15200)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Default for SPDIF define set to 1 in app_usb_aud_l1 customdefines.h.</dt>
+<dd><p>Previously SPDIF not properly enabled in binaries (#15129)</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) All remaining references to stdcore[] replaced with tile[] (#15122)</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Removed hostactive.xc and audiostream.xc from app_usb_aud_skc_u16 such</dt>
+<dd><p>that default implementations are used (hostactive.xc was using an invalid port) (#15118)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) The next 44.1 based freq above MAX_FREQ was reported by</dt>
+<dd><p>GetRange(SamplingFrequency) when MAX_FREQ = MIN_FREQ (and MAX_FREQ was 48k based) (#15127)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) MIDI input events no longer intermittently dropped under heavy output traffic</dt>
+<dd><p>(Typically SysEx) from USB host - MIDI Rx port now buffered (#14224)</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) Fixed port mapping in app_usb_aud_skc_u16 XN file (#15124)</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) DEFAULT_FREQ was assumed to be a multiple of 48k during initial calculation</dt>
+<dd><p>of g_SampFreqMultiplier (#15141)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) SPDIF not properly enabled in any build of app_usb_aud_l1 (SPDIF define set to</dt>
+<dd><p>0 in customdefines.h) (#15102)</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) DFU enabled by default in app_usb_aud_l2 (#15153)</li>
+<li>RESOLVED:   (Minor) Build issue when NUM_USB_CHAN_IN or NUM_USB_CHAN_OUT set to 0 and MIXER set to 1 (#15096)</li>
+<li>RESOLVED:   (Minor) Build issue when CODEC_MASTER set (#15162)</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) DSD mute pattern output when invalid DSD frequency selected in Native DSD mode. Previously</dt>
+<dd><p>0 was driven resulting in pop noises on the analague output when switching between DSD/PCM (#14769)</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) Build error when OUT_VOLUME_IN_MIXER was set to 0 (#10692)</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) LR channel swap issue in CS42448 CODEC by more closely matching recommended</dt>
+<dd><p>power up sequence (app_usb_aud_l2) (#15189)</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) Improved the robustness of ADC I2S data port init when MASTER_CODEC defined (#15203)</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Channel counts in Audio 2 descriptors now modified based on bus-speed. Input stream</dt>
+<dd><p>format also modified (previously only output was) (#15202)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Full-speed Audio Class 2.0 sample-rate list properly restricted based on if input</dt>
+<dd><p>/output are enabled (#15210)</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) AUDIO_CLASS_FALLBACK no longer required to be defined when AUDIO_CLASS set to 1 (#13302)</li>
+</ul>
+</div></blockquote>
+<ul>
+<li>Changes to dependencies:<ul>
+<li>sc_usb_device: 1.0.3beta0 -&gt; 1.0.4beta5<ul>
+<li>CHANGE:     devDesc_hs and cfgDesc_hs params to USB_StandardRequests() now nullable (useful for full-speed only devices)</li>
+<li>CHANGE:     Nullable descriptor array parameters to USB_StandardRequests() changed from ?array[] to (?&amp;array)[] due to</li>
+</ul>
+</li>
+<li>sc_xud: 1.0.2alpha1 -&gt; 1.0.3beta1<ul>
+<li>RESOLVED:   (Minor) ULPI data-lines driven hard low and XMOS pull-up on STP line disabled</li>
+<li>RESOLVED:   (Minor) Fixes to improve memory usage such as adding missing resource usage</li>
+<li>RESOLVED:   (Minor) Moved to using supplied tools support for communicating with the USB tile</li>
+</ul>
+</li>
+<li>sc_usb: 1.0.1beta1 -&gt; 1.0.2beta1<ul>
+<li>ADDED:   USB_BMREQ_D2H_VENDOR_DEV and USB_BMREQ_D2H_VENDOR_DEV defines for vendor device requests</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id6">6.3.2</h2>
+<div><blockquote>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      SAMPLE_SUBSLOT_SIZE_HS/SAMPLE_SUBSLOT_SIZE_FS defines (default 4/3 bytes)</li>
+<li>ADDED:      SAMPLE_BIT_RESOLUTION_HS/SAMPLE_BIT_RESOLUTION_FS defines (default 24/24 bytes)</li>
+<li>CHANGE:     PIDs in app_usb_aud_xk_2c updated (previously shared with app_usb_aud_skc_su1). Requires Thesycon 2.15 or later</li>
+<li>RESOLVED:   (Minor) Fixed maxPacketSize for audio input endpoint (was hard-coded to 1024)</li>
+</ul>
+</div></blockquote>
+<ul>
+<li>Changes to dependencies:<ul>
+<li>sc_xud: 1.0.1beta3 -&gt; 1.0.2alpha1<ul>
+<li>ADDED:        Re-instated support for G devices (xud_g library)</li>
+</ul>
+</li>
+<li>sc_usb_device: 1.0.2beta0 -&gt; 1.0.3beta0</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id7">6.3.1</h2>
+<div><blockquote>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Reinstated application for XR-USB-AUDIO-2.0-MC board (app_usb_aud_l2)</li>
+<li>ADDED:      Support for operation with Apple devices (MFI licensees only - please contact XMOS)</li>
+<li>ADDED:      USER_MAIN_DECLARATIONS and USER_MAIN_CORES defines in main for easy addition of custom cores</li>
+<li>CHANGE:     Access to shared GPIO port (typically 32A) in app code now guarded with a lock for safety</li>
+<li>CHANGE:     Re-organised main() to call two functions with the aim to improve readability</li>
+<li>CHANGE:     Event queue logic in MIDI now in XC module-queue such that it can be inlined (code-size saving)</li>
+<li>CHANGE:     Various functions now marked static to encourage inlining, saving around 200 bytes of code-size</li>
+<li>CHANGE:     Removed redundant MIDI buffering code from previous buffering scheme</li>
+<li>CHANGE:     Some tidy of String descriptors table and related defines</li>
+</ul>
+</div></blockquote>
+<ul>
+<li>Changes to dependencies:<ul>
+<li>sc_i2c: 2.2.1rc0 -&gt; 2.3.0beta1<ul>
+<li>module_i2c_simple fixed to ACK correctly during multi-byte reads (all but the final byte will be now be ACKd)</li>
+<li>module_i2c_simple can now be built with support to send repeated starts and retry reads and writes NACKd by slave</li>
+<li>module_i2c_shared added to allow multiple logical cores to safely share a single I2C bus</li>
+<li>Removed readreg() function from single_port module since it was not safe</li>
+</ul>
+</li>
+<li>sc_spdif: 1.3.0rc4 -&gt; 1.3.1beta2<ul>
+<li>Added .type and .size directives to SpdifReceive. This is required for the function to show up in xTIMEcomposer binary viewer</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id8">6.3.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Application for XP-SKC-U16 board with XA-SK-AUDIO slice (app_usb_aud_xkc_u16)</li>
+<li>CHANGE:     Moved to XMOS toolchain version 13</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id9">6.2.1</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      DEFAULT_MCLK_FREQ define added</li>
+<li>RESOLVED:   Native DSD now easily disabled whilst keeping DoP mode enabled (setting NATIVE_DSD to 0 with DSD_CHANS_DAC &gt; 0)</li>
+<li>RESOLVED:   Device could become unresponsive if the host outputs a stream with an invalid DoP frequency (#14938)</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id10">6.2.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Application for XK-USB-AUDIO-U8-2C board</li>
+<li>ADDED:      PRODUCT_STR define for Product Strings</li>
+<li>ADDED:      Added DSD over PCM (DoP) mode</li>
+<li>ADDED:      Added Native DSD (Driver support required)</li>
+<li>ADDED:      Added optional channel for audio buffing control, this can reduce power consumption</li>
+<li>ADDED:      The device can run in Audio Class 2.0 when connected to a full-speed hub using the FULL_SPEED_AUDIO_2 define</li>
+<li>ADDED:      MIN_FREQ configuration define for setting minimum sample rate of device (previously assumed 44.1)</li>
+<li>CHANGE:     Endpoint0 code migrated to use new module_usb_device shared module</li>
+<li>CHANGE:     Device reboot code (for DFU) made more generic for multi-tile systems</li>
+<li>CHANGE:     DFU code now erases all upgrade images found, rather than just the first one</li>
+<li>CHANGE:     ports.h file no longer required.  Please declare custom ports in your own files</li>
+<li>CHANGE:     Define based warnings in devicedefines.h moved to warnings.xc to avoid multiple warnings being issued</li>
+<li>RESOLVED:   (Major) ADC port initialization did not operate as expected at 384kHz</li>
+<li>RESOLVED:   (Major) Resolved a compatibility issue with streaming on Intel USB 3.0 xHCI host controller</li>
+<li>RESOLVED:   (Major) Added defence against malformed Audio Class 1.0 packets as experienced on some Win 8.0 hosts. Previously this would cause an exception (Issue fixed in Win 8.1)</li>
+<li>RESOLVED:   (Minor)  maxPacketSize now reported based on device&#8217;s read bandwidth requirements.  This allows the driver to reserve the proper bandwidth amount (previously bandwidth would have been wasted)</li>
+<li>RESOLVED:   (Minor) Input channel strings used for output in one instance</li>
+<li>RESOLVED:   (Minor) Volume multiplication now compatible with 32bit samples. Previously assumed 24bit samples and would truncate bottom 3 bits</li>
+<li>RESOLVED:   (Minor) Fixed issue with SE0_NAK test mode (as required for device receiver sensitivity USB-IF compliance test</li>
+<li>RESOLVED:   (Minor) Fixed issue with packet parameters compliance test</li>
+<li>RESOLVED:   (Minor) Added bounds checking to string requests. Previously an exception was raised if an invalid String was requested</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id11">6.1.0</h2>
+<div><blockquote>
+<div><ul>
+<li>RESOLVED:   Resolved issue with DFU caused by SU1 ADC usage causing issues with soft reboot</li>
+<li>ADDED:      Added ability for channel count changes between UAC1 and UAC2 modes</li>
+<li>ADDED:      Support for iOS authentication (MFI licencees only - please contact XMOS)</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id12">6.0.1</h2>
+<div><blockquote>
+<div><ul>
+<li>CHANGE:     Removed support for early engineering sample U-series devices</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id13">6.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Support for SU1 (Via SU1 Core Board and Audio Slice) - see app_usb_aud_skc_su1</li>
+<li>ADDED:      Design moved to new build system</li>
+<li>ADDED:      Optional support for USB test modes</li>
+<li>ADDED:      Optional HID endpoint for audio controls and example usages</li>
+<li>ADDED:      Multiple build configurations for supported device configurations</li>
+<li>CHANGE:     Now uses latest XUD API</li>
+<li>CHANGE:     MIDI buffering simplified (using new XUD API) - no longer goes through decouple thread</li>
+<li>CHANGE:     Now uses sc_i2c from www.github.com/xcore/sc_i2c</li>
+<li>CHANGE:     Previous default serial string of &#8220;0000&#8221; removed. No serial string now reported.</li>
+<li>CHANGE:     Master volume update optimised slightly (updateMasterVol in audiorequests.xc)</li>
+<li>CHANGE:     Master volume control disabled in Audio Class 1.0 mode to solve various issues in Windows</li>
+<li>CHANGE:     Audio Class 2.0 Status/Interrupt endpoint disabled by default (enabled when SPDIF/ADAT receive enabled)</li>
+<li>CHANGE:     DFU/Flash code simplified</li>
+<li>RESOLVED:   (Minor) Fixed issue where buffering can lock up on sample frequency change if in overflow (#10897)</li>
+<li>RESOLVED:   (Minor) XN files updated to avoid deprecation warnings from tools</li>
+<li>RESOLVED:   (Major) Fixed issue where installation of the first upgrade image is successful but subsequent upgrades fail (Design Advisory X2035A)</li>
+</ul>
+</div></blockquote>
+<p>(Note: USB Audio version numbers unified across all products at this point)</p>
+<p>Previous L1 Firmware Releases</p>
+</div><h2 class="topic" id="id14">3.3.0</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>ADDED:      Added support for protocol Stall for un-recognised requests to Endpoint 0.</dt>
+<dd><p>BOS Descriptor test in latest version of USB CV test now passes.</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Major) Removed redundant delays in DFU image download.  This aids Windows DFU reliability.</li>
+<li>RESOLVED:   (Minor) DFU Run-time descriptors updated from DFU 1.0 to DFU 1.1 spec.  This allows USB CV test pass.</li>
+<li>RESOLVED:   (Minor) MIDI string descriptors added to string table.</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) bInterval value for feedback endpoint modified to be more compatible with Microsoft OSs</dt>
+<dd><p>(support for iso endpoints with bInterval &gt; 8 microframes).  This aids compatibility with 3rd party
+drivers for USB 3.0 controllers.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Fixed build failure when NUM_USB_CHAN_IN/NUM_USB_CHAN_OUT defined as 0. Previous INPUT/OUTPUT</dt>
+<dd><p>defines now based on NUM_USB_CHAN_XXX defines.</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) Removed redundant calls to assert() to free memory.</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id15">3.2.0</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Major) Fixed reset reliability for self-powered devices.  This was due to an issue with</dt>
+<dd><p>XUD/Endpoint synchronisation during communication of RESET bus state over channels.
+Bus powered devices should not be effected due to power up on every plug event.
+Note: Changes limited to XUD library only.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id16">3.1.1</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>RESOLVED    (Major) Removed size in re-interpret cast of DFU data buffer (unsigned to unsigned char). This</dt>
+<dd><p>was due to a new optimisation in the 11.2 compiler which removes part of the DFU buffer (dfu.xc)
+as it considers it un-used.  This causes the DFU download request to fail due to stack corruption.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id17">3.1.0</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>ADDED:      Re-added LEDA &#8220;Valid Host&#8221; functionality using VendorHostActive() call. This functionality</dt>
+<dd><p>missing since 3v00.  Note LED now indicated &#8220;Valid Host&#8221; rather than &#8220;Suspend&#8221; condition</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Major) Fixed issue when sharing bus with other devices especially high throughput bulk devices</dt>
+<dd><p>(e.g. hard disk drive). This is issue typically caused SOFs to missed by the device
+resulting in incorrect feedback calculation and ultimately audio glitching.  Note: this effects
+XUD library only.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Major) Intermittent issues with device chirp could lead to a bad packet on bus and device not</dt>
+<dd><p>being properly detected as high-speed.  This was due to opmode of transceiver sometimes
+not being set before chirp. Note: this effects XUD library only.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Intermittent USB CV Test fails with some hub models. Caused by test issuing suspend</dt>
+<dd><p>during resume signalling. Note: this effects XUD library only</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) bMaxPower now set to 10mA (was 500mA) since this is a self-powered design (see</dt>
+<dd><p>SELF_POWERED define)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Added code to deal with malformed audio packets from a misbehaving driver.</dt>
+<dd><p>Previously this could result in the device audio buffering raising an exception.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) First packet of audio IN stream now correct to current sample-rate.</dt>
+<dd><p>Previously first packet was of length relating to previous sample rate.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) MIDI OUT buffering code simplified.  Now a single buffer used instead</dt>
+<dd><p>of previous circular buffer.</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) Audio OUT stream buffer pre-fill level increased.</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Under stressed conditions the Windows built in Audio Class 1.0 driver (usbaudio.sys)</dt>
+<dd><p>may issue invalid sample frequencies (e.g. 48001Hz) leading to an unresponsive device.
+Additional checks added to cope with this.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id18">3.0.2</h2>
+<div><blockquote>
+<div><ul>
+<li>RESOLVED:   Windows build issue (#9681)</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id19">3.0.1</h2>
+<div><blockquote>
+<div><ul>
+<li>RESOLVED:   Version number reported as 0x0200, not 0x0300 (#9676)</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id20">3.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Added support to allow easy addition of custom audio requests</li>
+<li>ADDED:      Optional &#8220;Host Active&#8221; function calls</li>
+<li>RESOLVED:   Single sample delay between ADC L/R channels resolved (#8783)</li>
+<li>RESOLVED:   Use of MIDI cable numbers now compliant to specification (#8892)</li>
+<li>RESOLVED:   Improved USB interoperability and device performance when connected through chained hubs</li>
+<li>RESOLVED:   S/PDIF Tx channel status bits (32-41) added for improved compliance</li>
+<li>RESOLVED:   Increased robustness of high-speed reset recovery</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id21">2.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Buffering re-factoring</li>
+<li>Addition of MIDI</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id22">1.7.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Buffering fixes for non-intel USB chipsets</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id23">1.7.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Modifications for XMOS 10.4 tools release</li>
+<li>Added USB Compliance Test Mode support</li>
+<li>Added 88.2kHz sample frequency support for Audio Class 1.0</li>
+<li>Various fixes for USB Compliance Command Verifier</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id24">1.6.4</h2>
+<div><blockquote>
+<div><ul>
+<li>Thesycon Windows Driver DFU support added</li>
+<li>LSB inprecision at 0dB volume fixed</li>
+<li>DFU now supports custom flash parts</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id25">1.5.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Audio Class 1.0 available using build option, runs at full-speed</li>
+<li>Device falls back to Audio Class 1.0 when connected via a full-speed hub</li>
+<li>DFU functionality added</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id26">1.4.5</h2>
+<div><blockquote>
+<div><ul>
+<li>Suspend/Resume supported.  LED A indicates suspend condition</li>
+<li>LED B now indicates presence of audio stream</li>
+<li>Code refactor for easy user customisation</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id27">1.3.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Fixed feedback issue in 1v2 release of USB library xud.a (used 3-byte feedback)</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id28">1.2.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Device now enumerates correctly on Windows</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id29">1.1.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Device enumerates as 24bit (previously 32bit)</li>
+<li>Bit errors at 96kHz and 192kHz resolved</li>
+<li>S/PDIF output functionality added</li>
+<li>88.2KHz analog in/out and S/PDIF output added</li>
+<li><dl class="docutils">
+<dt>176.4KHz analog in/out added.  S/PDIF not supported at this frequency because it requires 2xMCLK.</dt>
+<dd><p>Board has 11.2896Mhz, and would require 22.579Mhz.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id30">1.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Initial release</li>
+</ul>
+</div></blockquote>
+<p>L1 Hardware</p>
+</div><h2 class="topic" id="id31">1.2.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Explicit power supply sequencing</li>
+<li>Power-on reset modified to include TRST_N</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id32">1.1.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Master clock re-routed to reduce cross-talk</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id33">1.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Initial Version</li>
+</ul>
+</div></blockquote>
+<p>Previous L2 Firmware Releases</p>
+</div><h2 class="topic" id="id34">5.3.0</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>ADDED:      Added support for protocol Stall for un-recognised requests to Endpoint 0.</dt>
+<dd><p>BOS Descriptor test in latest version of USB CV test now passes.</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Major) Removed redundant delays in DFU image download.  This aids Windows DFU reliability.</li>
+<li>RESOLVED:   (Minor) DFU Run-time descriptors updated from DFU 1.0 to DFU 1.1 spec.  This allows USB CV test pass.</li>
+<li>RESOLVED:   (Minor) MIDI string descriptors added to string table.</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) bInterval value for feedback endpoint modified to be more compatible with Microsoft OSs</dt>
+<dd><p>(support for iso endpoints with bInterval &gt; 8 microframes).  This aids compatibility with 3rd party
+drivers for USB 3.0 controllers.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Fixed build failure when NUM_USB_CHAN_IN/NUM_USB_CHAN_OUT defined as 0. Previous INPUT/OUTPUT</dt>
+<dd><p>defines now based on NUM_USB_CHAN_XXX defines.</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) Fixed build failure when MIXER defined as 0.</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) MAX_MIX_OUTPUTS define now effects device descriptors.  Previously only effected mixer</dt>
+<dd><p>processing.</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) Removed redundant calls to assert() to free memory.</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id35">5.2.0</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Major) Fixed reset reliability for self-powered devices.  This was due to an issue with</dt>
+<dd><p>XUD/Endpoint synchronisation during communication of RESET bus state over channels.
+Bus powered devices should not be effected due to power up on every plug event.
+Note: Changes limited to XUD library only.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id36">5.1.1</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Major) Removed size in re-interpret cast of DFU data buffer (unsigned to unsigned char). This</dt>
+<dd><p>was due to a new optimisation in the 11.2 compiler which removes part of the DFU buffer (dfu.xc)
+as it considers it un-used.  This causes the DFU download request to fail due to stack corruption.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id37">5.1.0</h2>
+<div><blockquote>
+<div><ul>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Major) Fixed issue when sharing bus with other devices especially high throughput bulk devices</dt>
+<dd><p>(e.g. hard disk drive). This is issue typically caused SOFs to missed by the device
+resulting in incorrect feedback calculation and ultimately audio glitching.  Note: Changes
+limited to XUD library only.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Major) Intermittent issues with device chirp could lead to a bad packet on bus and device not</dt>
+<dd><p>being properly detected as high-speed.  This was due to opmode of transceiver sometimes
+not being set before chirp. Note: Changes limited to XUD library only.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Intermittent USB CV Test fails with some hub models. Caused by test issuing suspend</dt>
+<dd><p>during resume signalling. Note: Changes limited to XUD library only.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) bMaxPower now set to 10mA (was 500mA) since this is a self-powered design (see</dt>
+<dd><p>SELF_POWERED define)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) Added code to deal with malformed audio packets from a misbehaving driver.</dt>
+<dd><p>Previously this could result in the device audio buffering raising an exception.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) First packet of audio IN stream now correct to current samplerate.</dt>
+<dd><p>Previously first packet was of length relating to previous sample rate.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="docutils">
+<dt>RESOLVED:   (Minor) MIDI OUT buffering code simplified.  Now a single buffer used instead of</dt>
+<dd><p>previous circular buffer.</p>
+</dd>
+</dl>
+</li>
+<li>RESOLVED:   (Minor) Audio OUT stream buffer pre-fill level increased.</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id38">5.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Added support to allow easy addition of custom audio requests</li>
+<li>ADDED:      Optional level meter processing added to mixer</li>
+<li>ADDED:      Volume control locations customisable (before/after mix etc)</li>
+<li>ADDED:      Mixer inputs are now runtime configurable (includes an &#8220;off&#8221; setting)</li>
+<li>ADDED:      Mixer/routing topology now compliant to Audio Class 2.0 specification</li>
+<li>ADDED:      Host mixer application updated for new topology and routing (and re-ported to Windows/Thesycon)</li>
+<li>ADDED:      Saturation added to mixer arithmetic</li>
+<li>ADDED:      Optional &#8220;Host Active&#8221; function calls (Example usage included)</li>
+<li>ADDED:      Optional &#8220;Clock Validity&#8221; function calls (Example usage included)</li>
+<li>RESOLVED:   Single sample delay between ADC L/R channels resolved (#8783)</li>
+<li>RESOLVED:   Issue where external PLL could sometimes be unlocked due to cable unplug (#9179)</li>
+<li>RESOLVED:   Use of MIDI cable numbers now compliant to specification (#8892)</li>
+<li>RESOLVED:   Improved USB interoperability and device performance when connected through chained hubs</li>
+<li>RESOLVED:   S/PDIF Tx channel status bits (32-41) added for improved compliance</li>
+<li>RESOLVED:   Various performance optimisations added to mixer code</li>
+<li>RESOLVED:   Increased robustness of high-speed reset recovery</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id39">4.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Addition of ADAT RX</li>
+<li>ADDED:      Design can now cope with variable channel numbers set by the host (via Alternate Interfaces)</li>
+<li>ADDED:      Fix to mixer volume range (range and resolution now definable in customdefines.h) (#9051)</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id40">3.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Addition of mixer</li>
+<li>ADDED:      Example host mixer application to package.  Uses Lib USB for OSX/Linux, Thesycon for Windows</li>
+<li>RESOLVED:   Fixed internal clock mode jitter on reference to fractional-n</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id41">2.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Addition of S/PDIF Rx functionality and associated clocking functionality</li>
+<li>ADDED:      Addition of Interrupt endpoint (interrupts on clock sources)</li>
+<li>RESOLVED:   String descriptors added for input channels</li>
+<li>RESOLVED:   Full-speed fall-back descriptors corrected for compliance</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id42">1.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Addition of MIDI input/output functionality</li>
+<li>ADDED:      Addition of DFU functionality</li>
+<li>RESOLVED:   Descriptor fixes for Windows (Thesycon) driver</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id43">0.5.2</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      Addition of support for CODEC in master mode (see CODEC_SLAVE define)</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id44">0.5.1</h2>
+<div><blockquote>
+<div><ul>
+<li>ADDED:      BCLK == MCLK now supported (i..e 192kHz from 12.288MHz)</li>
+<li>ADDED:      MCLK defines now propagate to feedback calculation and CODEC configuration</li>
+<li>RESOLVED:   XN file update for proper xflash operation</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id45">0.5.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Initial Alpha release</li>
+<li>10 channel input/output (8 chan DAC, 6 chan ADC, 2 chan S/PDIF tx)</li>
+<li>Master/channel volume/mute controls</li>
+</ul>
+</div></blockquote>
+<p>L2 Hardware</p>
+</div><h2 class="topic" id="id46">1.2.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Update for coax in, coax out cap &amp; minor tidyup</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id47">1.1.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Initial production</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id48">1.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Pre-production</li>
+</ul>
+</div></blockquote>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

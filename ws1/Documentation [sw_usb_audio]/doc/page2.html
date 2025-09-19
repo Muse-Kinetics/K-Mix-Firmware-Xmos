@@ -1,0 +1,1449 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>USB Audio Software Architecture &mdash; USB Audio Design Guide v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="USB Audio Design Guide v documentation" href="index.html" />
+    <link rel="next" title="The USB Audio System Architecture" href="page2.html#document-sw_intro" />
+    <link rel="prev" title="U16 Mult-Channel USB Audio Kit" href="page1.html#document-hw_u16_audio8" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>USB Audio Software Architecture</h1>
+
+             <div class='columns'>
+            
+  <p>The following sections describe the software architecture of the XMOS USB Audio platform.</p>
+<p>XMOS USB Audio solutions are provided as a framework with reference design applications customising
+and extending this framework to provide the required functionality.  These applications execute on a
+reference hardware platform.</p>
+<span id="document-sw_intro"></span><p></p>
+<h2 class="topic" id="the-usb-audio-system-architecture"><span id="usb-audio-sec-architecture"></span>The USB Audio System Architecture</h2>
+<div><p>The XMOS USB Audio platform consists of a series of communicating components. Every system is
+required to have the shared components listed in
+the table below.</p>
+<div class="figure"><div class="topic caption"><span>Shared Components</span></div><table border="1" class="docutils" id="usb-audio-shared-components">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Component</p>
+</th>
+<th class="head"><p>Description</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>XMOS USB Device Driver (XUD)</p>
+</td>
+<td><p>Handles the low level USB I/O.</p>
+</td>
+</tr>
+<tr><td><p>Endpoint 0</p>
+</td>
+<td><p>Provides the logic for Endpoint 0 which handles
+enumeration and control of the device including DFU related requests.</p>
+</td>
+</tr>
+<tr><td><p>Endpoint buffer</p>
+</td>
+<td><p>Buffers endpoint data packets to and from the host.</p>
+</td>
+</tr>
+<tr><td><p>Decoupler</p>
+</td>
+<td><p>Manages delivery of audio packets between the endpoint buffer
+component and the audio components. It can also handle volume control processing.</p>
+</td>
+</tr>
+<tr><td><p>Audio Driver</p>
+</td>
+<td><p>Handles audio I/O over I2S and manages audio data
+to/from other digital audio I/O components.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>In addition the table below shows components that can be added to a design:</p>
+<div class="figure"><div class="topic caption"><span>Optional Components</span></div><table border="1" class="docutils" id="usb-audio-optional-components">
+<colgroup>
+<col width="40%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Component</p>
+</th>
+<th class="head"><p>Description</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>Mixer</p>
+</td>
+<td><p>Allows digital mixing of input and output channels.  It can also
+handle volume control instead of the decoupler.</p>
+</td>
+</tr>
+<tr><td><p>S/PDIF Transmitter</p>
+</td>
+<td><p>Outputs samples of an S/PDIF digital audio interface.</p>
+</td>
+</tr>
+<tr><td><p>S/PDIF Receiver</p>
+</td>
+<td><p>Inputs samples of an S/PDIF digital audio interface (requires the
+clockgen component).</p>
+</td>
+</tr>
+<tr><td><p>ADAT Receiver</p>
+</td>
+<td><p>Inputs samples of an ADAT digital audio interface (requires the
+clockgen component).</p>
+</td>
+</tr>
+<tr><td><p>Clockgen</p>
+</td>
+<td><p>Drives an external frequency generator (PLL) and manages
+changes between internal clocks and external clocks arising
+from digital input.</p>
+</td>
+</tr>
+<tr><td><p>MIDI</p>
+</td>
+<td><p>Outputs and inputs MIDI over a serial UART interface.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><div class="figure" id="usb-audio-threads">
+<div class="caption"><span>USB Audio Core Diagram</span></div>
+<img alt="_images/threads-crop.png" src="_images/threads-crop.png" style="width: 100%;" />
+</div>
+<p><a class="reference" href="page2.html#usb-audio-threads"><span>USB Audio Core Diagram</span></a> shows how the components interact with each
+other.  The green circles represent cores with arrows indicating inter-core communications.</p>
+<p>This section will now examine these components in further detail.</p>
+</div><span id="document-sw_xud"></span><h2 class="topic" id="xmos-usb-device-xud-library">XMOS USB Device (XUD) Library</h2>
+<div><p>All low level communication with the USB host is handled by the XMOS USB Device (XUD) library.</p>
+<p>The <tt class="docutils literal"><span class="pre">XUD_Manager()</span></tt> function runs in its own core and communicates with endpoint cores though a
+mixture of shared memory and channel communications.</p>
+<p>For more details and full XUD API documentation please refer to <a class="reference" href="http://www.xmos.com/published/xuddg"><span>XMOS USB Device (XUD) Library</span></a></p>
+<p><a class="reference" href="page2.html#usb-audio-threads"><span>USB Audio Core Diagram</span></a> shows the XUD library communicating with two other cores:</p>
+<ul>
+<li>Endpoint 0: This core controls the enumeration/configuration tasks of the USB device.</li>
+<li>Endpoint Buffer: This core sends/receives data packets from the XUD library.
+The core receives audio data from the decoupler core, MIDI data from the MIDI core etc.</li>
+</ul>
+</div><span id="document-sw_ep0"></span><p></p>
+<h2 class="topic" id="endpoint-0-management-and-control"><span id="usb-audio-sec-usb"></span>Endpoint 0: Management and Control</h2>
+<div><p>All USB devices must support a mandatory control endpoint, Endpoint 0.  This controls the management tasks of the USB device.</p>
+<p>These tasks can be generally split into enumeration, audio configuration and firmware upgrade requests.</p>
+<h3 id="enumeration">Enumeration</h3>
+<div><p>When the device is first attached to a host, enumeration occurs.  This process involves the host interrogating the device as to its functionality. The device does this by presenting several interfaces to the host via a set of descriptors.</p>
+<p>During the enumeration process the host will issue various commands to the device including assigning the device a unique address on the bus.</p>
+<p>The endpoint 0 code runs in its own core and follows a similar format to that of the USB Device examples in sc_usb_device (i.e. Example HID Mouse Demo). That is, a call is made to <tt class="docutils literal"><span class="pre">USB_GetSetupPacket()</span></tt> to receive a command from the host. This populates a <tt class="docutils literal"><span class="pre">USB_SetupPacket_t</span></tt> structure, which is then parsed.</p>
+<p>There are many mandatory requests that a USB Device must support as required by the USB Specification. Since these are required for all devices in order to function a
+<tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt> function is provided (see <tt class="docutils literal"><span class="pre">module_usb_device</span></tt>) which implements all of these requests. This includes the following items:</p>
+<blockquote>
+<div><ul>
+<li>Requests for standard descriptors (Device descriptor, configuration descriptor etc) and string descriptors</li>
+<li>USB GET/SET INTERFACE requests</li>
+<li>USB GET/SET_CONFIGURATION requests</li>
+<li>USB SET_ADDRESS requests</li>
+</ul>
+</div></blockquote>
+<p>For more information and full documentation, including full worked examples of simple devices, please refer the <a class="reference" href="https://www.xmos.com/zh/node/17007?page=9"><span>XMOS USB Device Design Guide</span></a></p>
+<p>The <tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt> function takes the devices various descriptors as parameters, these are passed from data structures found in the <tt class="docutils literal"><span class="pre">descriptors.h</span></tt> file.
+These data structures are fully customised based on the how the design is configured using various defines (see <a class="reference" href="#usb-audio-sec-custom-defines-api"><span>Custom Defines</span></a>).</p>
+<p>The <tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt> functions returns a <tt class="docutils literal"><span class="pre">XUD_Result_t</span></tt>. <tt class="docutils literal"><span class="pre">XUD_RESULT_OKAY</span></tt> indicates that the request was fully handled without error and no further action is required
+- The device should move to receiving the next request from the host (via <tt class="docutils literal"><span class="pre">USB_GetSetupPacket()</span></tt>).</p>
+<p>The function returns <tt class="docutils literal"><span class="pre">XUD_RES_ERR</span></tt> if the request was not recognised by the <tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt> function and a STALL has been issued.</p>
+<p>The function may also return <tt class="docutils literal"><span class="pre">XUD_RES_RST</span></tt> if a bus-reset has been issued onto the bus by the host and communicated from XUD to Endpoint 0.</p>
+<p>Since the <tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt> function STALLs an unknown request, the endpoint 0 code must parse the <tt class="docutils literal"><span class="pre">USB_SetupPacket_t</span></tt> structure to handle device specific requests and then calling <tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt> as required.  This is described next.</p>
+</div><h3 id="over-riding-standard-requests">Over-riding Standard Requests</h3>
+<div><p>The USB Audio design &#8220;over-rides&#8221; some of the requests handled by <tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt>, for example it uses the SET_INTERFACE request to indicate it if the host is streaming audio to the device.  In this case the setup packet is parsed, the relevant action taken, the <tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt> is called to handle the response to the host etc.</p>
+</div><h3 id="class-requests">Class Requests</h3>
+<div><p>Before making the call to <tt class="docutils literal"><span class="pre">USB_StandardRequests()</span></tt> the setup packet is parsed for Class requests. These are handled in functions such as <tt class="docutils literal"><span class="pre">AudioClasRequests_2()</span></tt>, <tt class="docutils literal"><span class="pre">AudioClassRequests_2</span></tt>, <tt class="docutils literal"><span class="pre">DFUDeviceRequests()</span></tt> etc depending on the type of request.</p>
+<p>Any device specific requests are handled - in this case audio class, MIDI class, DFU requests etc.</p>
+<p>Some of the common Audio Class requests and their associated behaviour will now be examined.</p>
+<h4 id="audio-requests">Audio Requests</h4>
+<div><p>When the host issues an audio request (e.g. sample rate or volume change), it sends a command to Endpoint 0. Like all requests this is returned from <tt class="docutils literal"><span class="pre">USB_GetSetupPacker()</span></tt>. After some parsing (namely as Class Request to an Audio Interface) the request is handled by either the <tt class="docutils literal"><span class="pre">AudioClassRequests_1()</span></tt> or <tt class="docutils literal"><span class="pre">AudioClassRequests_2()</span></tt> function (based on whether the device is running in Audio Class 1.0 or 2.0 mode).</p>
+<p>Note, Audio Class 1.0 Sample rate changes are send to the relevant endpoint, rather than the interface - this is handled as a special case in he endpoint 0 request parsing where <tt class="docutils literal"><span class="pre">AudioEndpointRequests_1()</span></tt> is called.</p>
+<p>The <tt class="docutils literal"><span class="pre">AudioClassRequests_X()</span></tt> functions parses the request further in order to ascertain the correct audio operation to execute.</p>
+</div><h4 id="audio-request-set-sample-rate">Audio Request: Set Sample Rate</h4>
+<div><p>The <tt class="docutils literal"><span class="pre">AudioClassRequests_2()</span></tt> function parses the passed <tt class="docutils literal"><span class="pre">USB_SetupPacket_t</span></tt> structure for a <tt class="docutils literal"><span class="pre">CUR</span></tt> request of type <tt class="docutils literal"><span class="pre">SAM_FREQ_CNTROL</span></tt> to a Clock Unit in the devices topology (as described in the devices descriptors).</p>
+<p>The new sample frequency is extracted and passed via channel to the rest of the design - through the buffering code and eventually to the Audio IO/I2S core.  The <tt class="docutils literal"><span class="pre">AudioClassRequests_2()</span></tt> function waits for a handshake to propagate back though the system before signalling to the host that the request has completed successfully. Note, during this time the USB library is NAKing the host essentially holding off further traffic/requests until the sample-rate change is fully complete.</p>
+</div><h4 id="audio-request-volume-control"><span id="usb-audio-sec-audio-requ-volume"></span>Audio Request: Volume Control</h4>
+<div><p>When the host requests a volume change, it
+sends an audio interface request to Endpoint 0. An array is
+maintained in the Endpoint 0 core that is updated with such a
+request.</p>
+<p>When changing the volume, Endpoint 0 applies the master volume and
+channel volume, producing a single volume value for each channel.
+These are stored in the array.</p>
+<p>The volume will either be handled by the <tt class="docutils literal"><span class="pre">decoupler</span></tt> core or the mixer
+component (if the mixer component is used). Handling the volume in the
+mixer gives the decoupler more performance to handle more channels.</p>
+<p>If the effect of the volume control array on the audio input and
+output is implemented by the decoupler, the <tt class="docutils literal"><span class="pre">decoupler</span></tt> core
+reads the volume values from this array. Note that this array is shared
+between Endpoint 0 and the decoupler core. This is done in a safe
+manner, since only Endpoint 0 can write to the array, word update
+is atomic between cores and the decoupler core only reads from
+the array (ordering between writes and reads is unimportant in this
+case). Inline assembly is used by the decoupler core to access
+the array, avoiding the parallel usage checks in XC.</p>
+<p>If volume control is implemented in the mixer, Endpoint 0 sends a mixer command to the mixer to change the volume. Mixer commands
+are described in <a class="reference" href="page2.html#usb-audio-sec-mixer"><span>Digital Mixer</span></a>.</p>
+</div></div></div><h2 class="topic" id="audio-endpoints-endpoint-buffer-and-decoupler">Audio Endpoints (Endpoint Buffer and Decoupler)</h2>
+<div><h3 id="endpoint-buffer">Endpoint Buffer</h3>
+<div><p>All endpoints other that Endpoint 0 are handled in one core. This
+core is implemented in the file <tt class="docutils literal"><span class="pre">usb_buffer.xc</span></tt>. This core is communicates directly with the XUD library.</p>
+<p>The USB buffer core is also responsible for feedback calculation based on USB Start Of Frame
+(SOF) notification and reads from the port counter of a port connected to the master clock.</p>
+</div><h3 id="decoupler">Decoupler</h3>
+<div><p>The decoupler supplies the USB buffering core with buffers to
+transmit/receive audio data to/from the host. It marshals these buffers into
+FIFOs. The data from the FIFOs are then sent over XC channels to
+other parts of the system as they need it. This core also
+determines the size of each packet of audio sent to the host (thus
+matching the audio rate to the USB packet rate). The decoupler is
+implemented in the file <tt class="docutils literal"><span class="pre">decouple.xc</span></tt>.</p>
+</div><h3 id="audio-buffering-scheme">Audio Buffering Scheme</h3>
+<div><p>This scheme is executed by co-operation between the buffering
+core, the decouple core and the XUD library.</p>
+<p>For data going from the device to the host the following scheme is
+used:</p>
+<ol class="arabic simple">
+<li>The decouple core receives samples from the audio core and
+puts them into a FIFO. This FIFO is split into packets when data is
+entered into it. Packets are stored in a format consisting of their
+length in bytes followed by the data.</li>
+<li>When the buffer cores needs a buffer to send to the XUD core
+(after sending the previous buffer), the decouple core is
+signalled (via a shared memory flag).</li>
+<li>Upon this signal from the buffering core, the decouple core
+passes the next packet from the FIFO to the buffer core. It also
+signals to the XUD library that the buffer core is able to send a
+packet.</li>
+<li>When the buffer core has sent this buffer, it signals to the
+decouple that the buffer has been sent and the decouple core
+moves the read pointer of the FIFO.</li>
+</ol>
+<p>For data going from the host to the device the following scheme is
+used:</p>
+<ol class="arabic simple">
+<li>The decouple core passes a pointer to the buffering core
+pointing into a FIFO of data and signals to the XUD library that
+the buffering core is ready to receive.</li>
+<li>The buffering core then reads a USB packet into the FIFO and
+signals to the decoupler that the packet has been read.</li>
+<li>Upon receiving this signal the decoupler core updates the
+write pointer of the FIFO and provides a new pointer to the
+buffering core to fill.</li>
+<li>Upon request from the audio core, the decoupler core sends
+samples to the audio core by reading samples out of the FIFO.</li>
+</ol>
+</div><h3 id="decoupler-audio-core-interaction">Decoupler/Audio core interaction</h3>
+<div><p>To meet timing requirements of the audio system, the decoupler
+core must respond to requests from the audio system to
+send/receive samples immediately. An interrupt handler
+is set up in the decoupler core to do this. The interrupt handler
+is implemented in the function <tt class="docutils literal"><span class="pre">handle_audio_request</span></tt>.</p>
+<p>The audio system sends a word over a channel to the decouple core to
+request sample transfer (using the build in outuint function).
+The receipt of this word in the channel
+causes the <tt class="docutils literal"><span class="pre">handle_audio_request</span></tt> interrupt to fire.</p>
+<p>The first operation the interrupt handler does is to send back a word
+acknowledging the request (if there was a change of sample frequency
+a control token would instead be sent&#8212;the audio system uses a testct()
+to inspect for this case).</p>
+<p>Sample transfer may now take place.  First the audio subsystem transfers
+samples destined for the host, then the decouple core sends
+samples from the host to device.  These transfers always take place
+in channel count sized chunks (i.e. <tt class="docutils literal"><span class="pre">NUM_USB_CHAN_OUT</span></tt> and
+<tt class="docutils literal"><span class="pre">NUM_USB_CHAN_IN</span></tt>).  That is, if the device has 10 output channels and
+8 input channels, 10 samples are sent from the decouple core and 8 received
+every interrupt.</p>
+<p>The complete communication scheme is shown in the table below (for non sample
+frequency change case):</p>
+<div class="figure"><div class="caption"><span>Decouple/Audio System Channel Communication</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="23%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Decouple</p>
+</th>
+<th class="head"><p>Audio System</p>
+</th>
+<th class="head"><p>Note</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>&nbsp;</td>
+<td><p>outuint()</p>
+</td>
+<td><p>Audio system requests sample exchange</p>
+</td>
+</tr>
+<tr><td><p>inuint()</p>
+</td>
+<td>&nbsp;</td>
+<td><p>Interrupt fires and inuint performed</p>
+</td>
+</tr>
+<tr><td><p>outuint()</p>
+</td>
+<td>&nbsp;</td>
+<td><p>Decouple sends ack</p>
+</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td><p>testct()</p>
+</td>
+<td><p>Checks for CT indicating SF change</p>
+</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td><p>inuint()</p>
+</td>
+<td><p>Word indication ACK input (No SF change)</p>
+</td>
+</tr>
+<tr><td><p>inuint()</p>
+</td>
+<td><p>outuint()</p>
+</td>
+<td><p>Sample transfer (Device to Host)</p>
+</td>
+</tr>
+<tr><td><p>inuint()</p>
+</td>
+<td><p>outuint()</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>inuint()</p>
+</td>
+<td><p>outuint()</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>...</p>
+</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>outuint()</p>
+</td>
+<td><p>inuint()</p>
+</td>
+<td><p>Sample transfer (Host to Device)</p>
+</td>
+</tr>
+<tr><td><p>outuint()</p>
+</td>
+<td><p>inuint()</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>outuint()</p>
+</td>
+<td><p>inuint()</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>outuint()</p>
+</td>
+<td><p>inuint()</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>...</p>
+</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">The acknowledgement sent from Decouple to the Audio System is an &#8220;output underflow flag&#8221;
+if set to 1 the subsequent host to device sample transfer does not take place. This allows
+the Audio subsystem to implement a suitable underflow behaviour based on the current audio
+format.</p>
+<h4 id="asynchronous-feedback">Asynchronous Feedback</h4>
+<div><p>The device uses a feedback endpoint to report the rate at which
+audio is output/input to/from external audio interfaces/devices. This feedback is in accordance with
+the <em>USB 2.0 Specification</em>.</p>
+<p>This asynchronous clocking scheme means that the device is the clocking master than therefore
+means a high-quality local master clock source can be used.</p>
+<p>After each received USB SOF token, the buffering core takes a time-stamp from a port clocked off
+the master clock. By subtracting the time-stamp taken at the previous SOF, the number of master
+clock ticks since the last SOF is calculated. From this the number of samples (as a fixed
+point number) between SOFs can be calculated.
+This count is aggregated over 128 SOFs and used as a basis for the feedback value.</p>
+<p>The sending of feedback to the host is also handled in the USB buffering core via the feedback
+IN endpoint.</p>
+</div><h4 id="usb-rate-control">USB Rate Control</h4>
+<div><p id="usb-audio-sec-usb-rate-control">The Audio core must consume data from USB
+and provide data to USB at the correct rate for the selected sample
+frequency. The <em>USB 2.0 Specification</em> states that the maximum
+variation on USB packets can be +/- 1 sample per USB frame. USB
+frames are sent at 8kHz, so on average for 48kHz each packet
+contains six samples per channel. The device uses Asynchronous mode,
+so the audio clock may drift and run faster or slower than the
+host. Hence, if the audio clock is slightly fast, the device may
+occasionally input/output seven samples rather than six. Alternatively,
+it may be slightly slow and input/output five samples rather than six.
+<a class="reference" href="page2.html#usb-audio-samples-per-packet"><span>Allowed samples per packet</span></a> shows the allowed number of samples
+per packet for each example audio frequency.</p>
+<p>See USB Device Class Definition for Audio Data Formats v2.0 section 2.3.1.1
+for full details.</p>
+<div class="figure"><div class="caption"><span>Allowed samples per packet</span></div><table border="1" class="docutils" id="usb-audio-samples-per-packet">
+<colgroup>
+<col width="40%" />
+<col width="30%" />
+<col width="30%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Frequency (kHz)</p>
+</th>
+<th class="head"><p>Min Packet</p>
+</th>
+<th class="head"><p>Max Packet</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>44.1</p>
+</td>
+<td><p>5</p>
+</td>
+<td><p>6</p>
+</td>
+</tr>
+<tr><td><p>48</p>
+</td>
+<td><p>5</p>
+</td>
+<td><p>7</p>
+</td>
+</tr>
+<tr><td><p>88.2</p>
+</td>
+<td><p>10</p>
+</td>
+<td><p>11</p>
+</td>
+</tr>
+<tr><td><p>96</p>
+</td>
+<td><p>11</p>
+</td>
+<td><p>13</p>
+</td>
+</tr>
+<tr><td><p>176.4</p>
+</td>
+<td><p>20</p>
+</td>
+<td><p>21</p>
+</td>
+</tr>
+<tr><td><p>192</p>
+</td>
+<td><p>23</p>
+</td>
+<td><p>25</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>To implement this control, the decoupler core uses the feedback
+value calculated in the buffering core. This value is used to
+work out the size of the next packet it will insert into the audio
+FIFO.</p>
+<span class="target" id="usb-audio-sec-audio-requ-sett"></span></div></div></div><span id="document-sw_audio"></span><h2 class="topic" id="audio-driver"><span id="usb-audio-sec-audio"></span>Audio Driver</h2>
+<div><p>The audio driver receives and transmits samples from/to the decoupler
+or mixer core over an XC channel.
+It then drives several in and out I2S channels. If
+the firmware is configured with the CODEC as slave, it will also
+drive the word and bit clocks in this core as well. The word
+clocks, bit clocks and data are all derived from the incoming
+master clock (typically the output of the external oscillator or PLL). The audio
+driver is implemented in the file <tt class="docutils literal"><span class="pre">audio.xc</span></tt>.</p>
+<p>The audio driver captures and plays audio data over I2S. It also
+forwards on relevant audio data to the S/PDIF transmit core.</p>
+<p>The audio core must be connected to a CODEC that supports I2S (other
+modes such as &#8220;left justified&#8221; can be supported with firmware changes). In
+slave mode, the XMOS device acts as the master generating the Bit
+Clock (BCLK) and Left-Right Clock (LRCLK, also called Word Clock)
+signals. Any CODEC or DAC/ADC combination that supports I2S and can be used.</p>
+<p>The table below shows the signals used to communicate audio between
+the XMOS device and the CODEC.</p>
+<div class="figure"><div class="topic caption"><span>I2S Signals</span></div><table border="1" class="docutils" id="usb-audio-codec-signals">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Signal</p>
+</th>
+<th class="head"><p>Description</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>LRCLK</p>
+</td>
+<td><p>The word clock, transition at the start of a sample</p>
+</td>
+</tr>
+<tr><td><p>BCLK</p>
+</td>
+<td><p>The bit clock, clocks data in and out</p>
+</td>
+</tr>
+<tr><td><p>SDIN</p>
+</td>
+<td><p>Sample data in (from CODEC/ADC to the XMOS device)</p>
+</td>
+</tr>
+<tr><td><p>SDOUT</p>
+</td>
+<td><p>Sample data out (from the XMOS device to CODEC/DAC)</p>
+</td>
+</tr>
+<tr><td><p>MCLK</p>
+</td>
+<td><p>The master clock running the CODEC/DAC/ADC</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>The bit clock controls the rate at which data is transmitted to and
+from the CODEC.
+In the case where the XMOS device is the master, it divides the MCLK to generate the required signals for both BCLK and LRCLK,
+with BCLK then being used to clock data in (SDIN) and data out
+(SDOUT) of the CODEC.</p>
+<p>The table below shows some example clock frequencies and divides
+for different sample rates (note that this reflects the single tile L-Series reference board configuration):</p>
+<div class="figure"><div class="topic caption"><span>Clock Divides used in single tile L-Series Ref Design</span></div><table border="1" class="docutils" id="usb-audio-l1-clock-divides">
+<colgroup>
+<col width="30%" />
+<col width="25%" />
+<col width="25%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Sample Rate (kHz)</p>
+</th>
+<th class="head"><p>MCLK (MHz)</p>
+</th>
+<th class="head"><p>BCLK (MHz)</p>
+</th>
+<th class="head"><p>Divide</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>44.1</p>
+</td>
+<td><p>11.2896</p>
+</td>
+<td><p>2.819</p>
+</td>
+<td><p>4</p>
+</td>
+</tr>
+<tr><td><p>88.2</p>
+</td>
+<td><p>11.2896</p>
+</td>
+<td><p>5.638</p>
+</td>
+<td><p>2</p>
+</td>
+</tr>
+<tr><td><p>176.4</p>
+</td>
+<td><p>11.2896</p>
+</td>
+<td><p>11.2896</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+<tr><td><p>48</p>
+</td>
+<td><p>24.576</p>
+</td>
+<td><p>3.072</p>
+</td>
+<td><p>8</p>
+</td>
+</tr>
+<tr><td><p>96</p>
+</td>
+<td><p>24.576</p>
+</td>
+<td><p>6.144</p>
+</td>
+<td><p>4</p>
+</td>
+</tr>
+<tr><td><p>192</p>
+</td>
+<td><p>24.576</p>
+</td>
+<td><p>12.288</p>
+</td>
+<td><p>2</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>The master clock must be supplied by an external source e.g. clock generator,
+fixed oscillators, PLL etc to generate the two frequencies to support
+44.1kHz and 48kHz audio frequencies (e.g. 11.2896/22.5792MHz and 12.288/24.576MHz
+respectively).  This master clock input is then provided to the CODEC and
+the XMOS device.</p>
+<h3 id="port-configuration-codec-slave">Port Configuration (CODEC Slave)</h3>
+<div><p>The default software configuration is CODEC Slave (XMOS master).  That is, the XMOS device
+provides the BCLK and LRCLK signals to the CODEC.</p>
+<p>XS1 ports and XMOS clocks provide many valuable features for
+implementing I2S. This section describes how these are configured
+and used to drive the I2S interface.</p>
+<div class="figure">
+<div class="caption"><span>Ports and Clocks (CODEC slave)</span></div>
+<img alt="_images/port_config.png" src="_images/port_config.png" />
+</div>
+<p>The code to configure the ports and clocks is in the
+<tt class="docutils literal"><span class="pre">ConfigAudioPorts()</span></tt> function. Developers should not need to modify
+this.</p>
+<p>The XMOS device inputs MCLK and divides
+it down to generate BCLK and LRCLK. To achieve this, MCLK is input
+into the device using the 1-bit port <tt class="docutils literal"><span class="pre">p_mclk</span></tt>. This is
+attached to the clock block <tt class="docutils literal"><span class="pre">clk_audio_mclk</span></tt>, which is in
+turn used to clock the BCLK port, <tt class="docutils literal"><span class="pre">p_bclk</span></tt>. BCLK is used to
+clock the LRCLK (<tt class="docutils literal"><span class="pre">p_lrclk</span></tt>) and data signals SDIN (<tt class="docutils literal"><span class="pre">p_sdin</span></tt>)
+and SDOUT (<tt class="docutils literal"><span class="pre">p_sdout</span></tt>). Again, a clock block is used
+(<tt class="docutils literal"><span class="pre">clk_audio_bclk</span></tt>) which has <tt class="docutils literal"><span class="pre">p_bclk</span></tt> as its input and is
+used to clock the ports <tt class="docutils literal"><span class="pre">p_lrclk</span></tt>, <tt class="docutils literal"><span class="pre">p_sdin</span></tt> and <tt class="docutils literal"><span class="pre">p_sdout</span></tt>.
+The preceding diagram shows the connectivity of ports and clock
+blocks.</p>
+<p><tt class="docutils literal"><span class="pre">p_sdin</span></tt> and <tt class="docutils literal"><span class="pre">p_sdout</span></tt> are configured as
+buffered ports with a transfer width of 32, so all 32 bits are
+input in one input statement. This allows the software to input,
+process and output 32-bit words, whilst the ports serialize and
+deserialize to the single I/O pin connected to each port.</p>
+<p>Buffered ports with a transfer width of 32 are also used for
+<tt class="docutils literal"><span class="pre">p_bclk</span></tt> and <tt class="docutils literal"><span class="pre">p_lrclk</span></tt>. The bit clock is generated by
+performing outputs of a particular pattern to <tt class="docutils literal"><span class="pre">p_bclk</span></tt> to toggle
+the output at the desired rate. The pattern depends on the divide
+between MCLK and BCLK. The following table shows the pattern for
+different values of this divide:</p>
+<div class="figure"><div class="caption"><span>Output patterns</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Divide</p>
+</th>
+<th class="head"><p>Output pattern</p>
+</th>
+<th class="head"><p>Outputs per sample</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>2</p>
+</td>
+<td><p><tt class="docutils literal"><span class="pre">0xAAAAAAAA</span></tt></p>
+</td>
+<td><p>2</p>
+</td>
+</tr>
+<tr><td><p>4</p>
+</td>
+<td><p><tt class="docutils literal"><span class="pre">0xCCCCCCCC</span></tt></p>
+</td>
+<td><p>4</p>
+</td>
+</tr>
+<tr><td><p>8</p>
+</td>
+<td><p><tt class="docutils literal"><span class="pre">0xF0F0F0F0</span></tt></p>
+</td>
+<td><p>8</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>In any case, the bit clock outputs 32 clock cycles per sample. In the
+special case where the divide is 1 (i.e. the bit clock frequency equals
+the master clock frequency), the <tt class="docutils literal"><span class="pre">p_bclk</span></tt> port is set to a special
+mode where it simply outputs its clock input (i.e. <tt class="docutils literal"><span class="pre">p_mclk</span></tt>).
+See <tt class="docutils literal"><span class="pre">configure_port_clock_output()</span></tt> in <tt class="docutils literal"><span class="pre">xs1.h</span></tt> for details.</p>
+<p><tt class="docutils literal"><span class="pre">p_lrclk</span></tt> is clocked by <tt class="docutils literal"><span class="pre">p_bclk</span></tt>. The port outputs the pattern
+<tt class="docutils literal"><span class="pre">0x7fffffff</span></tt> followed by <tt class="docutils literal"><span class="pre">0x80000000</span></tt> repeatedly. This gives a
+signal that has a transition one bitclock before the data (as
+required by the I2S standard) and alternates between high and low
+for the left and right channels of audio.</p>
+</div><h3 id="changing-audio-sample-frequency">Changing Audio Sample Frequency</h3>
+<div><p id="usb-audio-sec-chang-audio-sample">When the host changes sample frequency, a new frequency is sent to
+the audio driver core by Endpoint 0 (via the buffering cores and mixer).</p>
+<p>First, a change of sample frequency is reported by
+sending the new frequency over an XC channel. The audio core
+detects this by checking for the presence of a control token on the channel channel</p>
+<p>Upon receiving the change of sample frequency request, the audio
+core stops the I2S interface and calls the CODEC/port configuration
+functions.</p>
+<p>Once this is complete, the I2S interface is restarted at the new frequency.</p>
+</div></div><span id="document-sw_mixer"></span><h2 class="topic" id="digital-mixer"><span id="usb-audio-sec-mixer"></span>Digital Mixer</h2>
+<div><p>The mixer core(s) take outgoing audio from the decoupler and incoming
+audio from the audio driver. It then applies the volume to each
+channel and passes incoming audio on to the decoupler and outgoing
+audio to the audio driver. The volume update is achieved using the
+built-in 32bit to 64bit signed multiply-accumulate function
+(<tt class="docutils literal"><span class="pre">macs</span></tt>). The mixer is implemented in the file
+<tt class="docutils literal"><span class="pre">mixer.xc</span></tt>.</p>
+<p>The mixer takes two cores and can perform eight mixes with
+up to 18 inputs at sample rates up to 96kHz and two mixes with up to 18
+inputs at higher sample rates. The component automatically moves
+down to two mixes when switching to a higher rate.</p>
+<p>The mixer can take inputs from either:</p>
+<blockquote>
+<div><ul>
+<li>The USB outputs from the host&#8212;these samples come from the decoupler core.</li>
+<li>The inputs from the audio interface on the device&#8212;these
+samples come from the audio driver.</li>
+</ul>
+</div></blockquote>
+<p>Since the sum of these inputs may be more then the 18 possible mix
+inputs to each mixer, there is a mapping from all the
+possible inputs to the mixer inputs.</p>
+<p>After the mix occurs, the final outputs are created. There are two
+output destinations:</p>
+<blockquote>
+<div><ul>
+<li>The USB inputs to the host&#8212;these samples are sent to the decoupler core.</li>
+<li>The outputs to the audio interface on the device&#8212;these samples
+are sent to the audio driver.</li>
+</ul>
+</div></blockquote>
+<p>For each possible output, a mapping exists to tell the mixer what its
+source is. The possible sources are the USB outputs from the host, the
+inputs for the audio interface or the outputs from the mixer units.</p>
+<p>As mentioned in <a class="reference" href="page2.html#usb-audio-sec-audio-requ-volume"><span>Audio Request: Volume Control</span></a>, the mixer can also
+handle volume setting. If the mixer is configured to handle volume but
+the number of mixes is set to zero (so the component is solely doing
+volume setting) then the component will use only one core.</p>
+<h3 id="control">Control</h3>
+<div><p>The mixers can receive the following control commands from the Endpoint 0 core via a channel:</p>
+<div class="figure"><div class="caption"><span>Mixer Component Commands</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Command</p>
+</th>
+<th class="head"><p>Description</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p><tt class="docutils literal"><span class="pre">SET_SAMPLES_TO_HOST_MAP</span></tt></p>
+</td>
+<td><p>Sets the source of one of the audio streams going to the host.</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">SET_SAMPLES_TO_DEVICE_MAP</span></tt></p>
+</td>
+<td><p>Sets the source of one of the audio streams going to the audio
+driver.</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">SET_MIX_MULT</span></tt></p>
+</td>
+<td><p>Sets the multiplier for one of the inputs to a mixer.</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">SET_MIX_MAP</span></tt></p>
+</td>
+<td><p>Sets the source of one of the inputs to a mixer.</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">SET_MIX_IN_VOL</span></tt></p>
+</td>
+<td><p>If volume adjustment is being done in the mixer, this command
+sets the volume multiplier of one of the USB audio inputs.</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">SET_MIX_OUT_VOL</span></tt></p>
+</td>
+<td><p>If volume adjustment is being done in the mixer, this command
+sets the volume multiplier of one of the USB audio outputs.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></div><h3 id="host-control">Host Control</h3>
+<div><p>The mixer can be controlled from a host PC by sending requests to Endpoint 0. XMOS provides a simple
+command line based sample application demonstrating how the mixer can be controlled.</p>
+<p>For details, consult the README in the host_usb_mixer_control directory.</p>
+<p>The main requirements of this control are to</p>
+<blockquote>
+<div><ul>
+<li>Set the mapping of input channels into the mixer</li>
+<li>Set the Coefficients for each mixer output of each input</li>
+<li>Set the mapping for physical outputs which can either come
+directly from the inputs or via the mixer.</li>
+</ul>
+</div></blockquote>
+<p>There is enough flexibility within this configuration there will often
+be multiple ways of creating the required solution.</p>
+<p>Using the XMOS Host control example application, consider setting the
+mixer to perform a loopback from analogue inputs 1 and 2 to analogue
+outputs 1 and 2. This must be run with the MultiChannel Audio device
+connected to the host you run the mixer app from.</p>
+<p>First consider the inputs to the mixer:</p>
+<pre class="snip-single-inline">
+./xmos_mixer --display-aud-channel-map 0
+</pre>
+<p>shows which channels are mapped to which mixer inputs:</p>
+<pre class="snip-single-inline">
+./xmos_mixer --display-aud-channel-map-sources 0
+</pre>
+<p>shows which channels could possibly be mapped to mixer inputs. Notice
+that analogue inputs 1 and 2 are on mixer inputs 10 and 11.</p>
+<p>Now examine the audio output mapping:</p>
+<pre class="snip-single-inline">
+./xmos_mixer --display-aud-channel-map 0
+</pre>
+<p>This shows which channels are mapped to which outputs. By default all
+of these bypass the mixer. We can also see what all the possible
+mappings are:</p>
+<pre class="snip-single-inline">
+./xmos_mixer --display-aud-channel-map-sources 0
+</pre>
+<p>So now map the first two mixer outputs to physical outputs 1 and 2:</p>
+<pre class="snip-multi-inline">
+./xmos_mixer --set-aud-channel-map 0 26
+./xmos_mixer --set-aud-channel-map 1 27
+</pre>
+<p>You can confirm the effect of this by re-checking the map:</p>
+<pre class="snip-single-inline">
+./xmos_mixer --display-aud-channel-map 0
+</pre>
+<p>This now makes analogue outputs 1 and 2 come from the mixer, rather
+than directly from USB. However the mixer is still mapped to pass
+the USB channels through to the outputs, so there will still be no
+functional change yet.</p>
+<p>The mixer nodes need to be individually set. They can be displayed
+with:</p>
+<pre class="snip-single-inline">
+./xmos_mixer --display-mixer-nodes 0
+</pre>
+<p>To get the audio from the analogue inputs to outputs 1 and 2, nodes 80
+and 89 need to be set:</p>
+<pre class="snip-multi-inline">
+./xmos_mixer --set-value 0 80 0
+./xmos_mixer --set-value 0 89 0
+</pre>
+<p>At the same time, the original mixer outputs can be muted:</p>
+<pre class="snip-multi-inline">
+./xmos_mixer --set-value 0 0 -inf
+./xmos_mixer --set-value 0 9 -inf
+</pre>
+<p>Now audio inputs on analogue 1/2 should be heard on outputs 1/2.</p>
+<p>As mentioned above, the flexibility of the mixer is such that there
+will be multiple ways to create a particular mix. Another option to
+create the same routing would be to change the mixer sources such that
+mixer 1/2 outputs come from the analogue inputs.</p>
+<p>To demonstrate this, firstly undo the changes above:</p>
+<pre class="snip-multi-inline">
+./xmos_mixer --set-value 0 80 -inf
+./xmos_mixer --set-value 0 89 -inf
+./xmos_mixer --set-value 0 0 0
+./xmos_mixer --set-value 0 9 0
+</pre>
+<p>The mixer should now have the default values. The sources for mixer
+1/2 can now be changed:</p>
+<pre class="snip-multi-inline">
+./xmos_mixer --set-mixer-source 0 0 10
+./xmos_mixer --set-mixer-source 0 1 11
+</pre>
+<p>If you rerun:</p>
+<pre class="snip-single-inline">
+./xmos_mixer --display-mixer-nodes 0
+</pre>
+<p>the first column now has AUD - Analogue 1 and 2 rather than DAW -
+Analogue 1 and 2 confirming the new mapping. Again, by playing audio
+into analogue inputs 1/2 this can be heard looped through to analogue
+outputs 1/2.</p>
+</div></div><span id="document-sw_spdif"></span><h2 class="topic" id="s-pdif-transmit">S/PDIF Transmit</h2>
+<div><p>XMOS devices can support S/PDIF transmit up to 192kHz. The XMOS S/SPDIF transmitter component runs
+in a single core and can be found in <tt class="docutils literal"><span class="pre">sc_spdif/module_spdif_tx</span></tt></p>
+<p>The S/PDIF transmitter core takes PCM audio samples via a channel and outputs them
+in S/PDIF format to a port.  A lookup table is used to encode the audio data into the required format.</p>
+<p>It receives samples from the Audio I/O core two at a time (for left and right). For each sample,
+it performs a lookup on each byte, generating 16 bits of encoded data which it outputs to a port.</p>
+<p>S/PDIF sends data in frames, each containing 192 samples of the left and right channels.</p>
+<p>Audio samples are encapsulated into S/PDIF words (adding preamble, parity, channel status and validity
+bits) and transmitted in biphase-mark encoding (BMC) with respect to an <em>external</em> master clock.</p>
+<p>Note that a minor change to the <tt class="docutils literal"><span class="pre">SpdifTransmitPortConfig</span></tt> function would enable <em>internal</em> master
+clock generation (e.g. when clock source is already locked to desired audio clock).</p>
+<div class="figure"><div class="topic caption"><span>S/PDIF Capabilities</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p><strong>Sample frequencies</strong></p>
+</td>
+<td><p>44.1, 48, 88.2, 96, 176.4, 192 kHz</p>
+</td>
+</tr>
+<tr><td><p><strong>Master clock ratios</strong></p>
+</td>
+<td><p>128x, 256x, 512x</p>
+</td>
+</tr>
+<tr><td><p><strong>Module</strong></p>
+</td>
+<td><p><tt class="docutils literal"><span class="pre">module_spdif_tx</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="clocking">Clocking</h3>
+<div><div class="figure">
+<div class="caption"><span>D-Type Jitter Reduction</span></div>
+<img alt="_images/spdif.png" src="_images/spdif.png" />
+</div>
+<p>The S/PDIF signal is output at a rate dictated by the external master clock. The master clock must
+be 1x 2x or 4x the BMC bit rate (that is 128x 256x or 512x audio sample rate, respectively).
+For example, the minimum master clock frequency for 192kHz is therefore 24.576MHz.</p>
+<p>This resamples the master clock to its clock domain (oscillator), which introduces jitter of 2.5-5 ns on the S/PDIF signal.
+A typical jitter-reduction scheme is an external D-type flip-flop clocked from the master clock (as shown in the preceding diagram).</p>
+</div><h3 id="usage">Usage</h3>
+<div><p>The interface to the S/PDIF transmitter core is via a normal channel with streaming built-ins
+(<tt class="docutils literal"><span class="pre">outuint</span></tt>, <tt class="docutils literal"><span class="pre">inuint</span></tt>). Data format should be 24-bit left-aligned in a 32-bit word: <tt class="docutils literal"><span class="pre">0x12345600</span></tt></p>
+<p>The following protocol is used on the channel:</p>
+<div class="figure"><div class="caption"><span>S/PDIF Component Protocol</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p><tt class="docutils literal"><span class="pre">outuint</span></tt></p>
+</td>
+<td><p>Sample frequency (Hz)</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">outuint</span></tt></p>
+</td>
+<td><p>Master clock frequency (Hz)</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">outuint</span></tt></p>
+</td>
+<td><p>Left sample</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">outuint</span></tt></p>
+</td>
+<td><p>Right sample</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">outuint</span></tt></p>
+</td>
+<td><p>Left sample</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">outuint</span></tt></p>
+</td>
+<td><p>Right sample</p>
+</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">...</span></tt></p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">...</span></tt></p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p><tt class="docutils literal"><span class="pre">outct</span></tt></p>
+</td>
+<td><p>Terminate</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></div><h3 id="output-stream-structure">Output stream structure</h3>
+<div><p>The stream is composed of words with the following structure shown in
+the table below. The channel status bits are
+0x0nc07A4, where c=1 for left channel, c=2 for right channel and n
+indicates sampling frequency as shown in <a class="reference" href="page2.html#usb-audio-spdif-sample-bits"><span>Channel Status Bits</span></a>.</p>
+<div class="figure"><div class="caption"><span>S/PDIF Stream Structure</span></div><table border="1" class="docutils" id="usb-audio-spdif-stream-structure">
+<colgroup>
+<col width="10%" />
+<col width="32%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Bits</p>
+</th>
+<th class="head">&nbsp;</th>
+<th class="head">&nbsp;</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>0:3</p>
+</td>
+<td><p>Preamble</p>
+</td>
+<td><p>Correct B M W order, starting at sample 0</p>
+</td>
+</tr>
+<tr><td><p>4:27</p>
+</td>
+<td><p>Audio sample</p>
+</td>
+<td><p>Top 24 bits of given word</p>
+</td>
+</tr>
+<tr><td><p>28</p>
+</td>
+<td><p>Validity bit</p>
+</td>
+<td><p>Always 0</p>
+</td>
+</tr>
+<tr><td><p>29</p>
+</td>
+<td><p>Subcode data (user bits)</p>
+</td>
+<td><p>Unused, set to 0</p>
+</td>
+</tr>
+<tr><td><p>30</p>
+</td>
+<td><p>Channel status</p>
+</td>
+<td><p>See below</p>
+</td>
+</tr>
+<tr><td><p>31</p>
+</td>
+<td><p>Parity</p>
+</td>
+<td><p>Correct parity across bits 4:30</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><div class="figure"><div class="caption"><span>Channel Status Bits</span></div><table border="1" class="docutils" id="usb-audio-spdif-sample-bits">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Frequency (kHz)</p>
+</th>
+<th class="head"><p>n</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>44.1</p>
+</td>
+<td><p>0</p>
+</td>
+</tr>
+<tr><td><p>48</p>
+</td>
+<td><p>2</p>
+</td>
+</tr>
+<tr><td><p>88.2</p>
+</td>
+<td><p>8</p>
+</td>
+</tr>
+<tr><td><p>96</p>
+</td>
+<td><p>A</p>
+</td>
+</tr>
+<tr><td><p>176.4</p>
+</td>
+<td><p>C</p>
+</td>
+</tr>
+<tr><td><p>192</p>
+</td>
+<td><p>E</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></div></div><span id="document-sw_spdif_rx"></span><h2 class="topic" id="s-pdif-receive">S/PDIF Receive</h2>
+<div><p>XMOS devices can support S/PDIF receive up to 192kHz.</p>
+<p>The S/PDIF receiver module uses a clockblock and a buffered one-bit port.
+The clock-block is divided of a 100 MHz reference clock. The one bit port is buffered to 4-bits.
+The receiver code uses this clock to over sample the input data.</p>
+<p>The receiver outputs audio samples over a <em>streaming channel end</em> where data can be input using the
+built-in input operator.</p>
+<p>The S/PDIF receive function never returns. The 32-bit value from the channel
+input comprises:</p>
+<div class="figure"><div class="topic caption"><span>S/PDIF RX Word Structure</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Bits</p>
+</th>
+<th class="head">&nbsp;</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>0:3</p>
+</td>
+<td><p>A tag (see below)</p>
+</td>
+</tr>
+<tr><td><p>4:28</p>
+</td>
+<td><p>PCM encoded sample value</p>
+</td>
+</tr>
+<tr><td><p>29:31</p>
+</td>
+<td><p>User bits (parity, etc)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>The tag has one of three values:</p>
+<div class="figure"><div class="topic caption"><span>S/PDIF RX Tags</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Tag</p>
+</th>
+<th class="head"><p>Meaning</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>FRAME_X</p>
+</td>
+<td><p>Sample on channel 0 (Left for stereo)</p>
+</td>
+</tr>
+<tr><td><p>FRAME_Y</p>
+</td>
+<td><p>Sample on another channel (Right if for stereo)</p>
+</td>
+</tr>
+<tr><td><p>FRAME_Z</p>
+</td>
+<td><p>Sample on channel 0 (Left), and the first sample of a frame; can be used if the user bits need to be reconstructed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>See S/PDIF specification for further details on format, user bits etc.</p>
+<h3 id="usage-and-integration">Usage and Integration</h3>
+<div><p>Since S/PDIF is a digital steam the devices master clock must be syncronised to it. This is typically
+done with an external fractional-n multipier. See <cite>Clock Recovery</cite> (<a class="reference" href="page2.html#usb-audio-sec-clock-recovery"><span>External Clock Recovery (ClockGen)</span></a>)</p>
+<p>The S/PDIF receive function communicates with the <tt class="docutils literal"><span class="pre">clockGen</span></tt> component with passes audio data to the
+audio driver and handles locking to the S/PDIF clock source if required (see External Clock Recovery).</p>
+<p>Ideally the parity of each word/sample received should be checked.  This is done using the built in
+<tt class="docutils literal"><span class="pre">crc32</span></tt> function (see <tt class="docutils literal"><span class="pre">xs1.h</span></tt>):</p>
+<pre>
+/* Returns 1 for bad parity, else 0 */
+static inline int badParity(unsigned x)
+{
+    unsigned X = (x&gt;&gt;4);
+    crc32(X, 0, 1);
+    return X & 1;
+}
+
+</pre>
+<p>If bad parity is detected the word/sample is ignored, otherwise the tag is inspected for channel
+(i.e. left or right) and the sample stored.</p>
+<p>The following code snippet illustrates how the output of the S/PDIF receive component could be used:</p>
+<pre class="snip-multi-inline">
+while(1)
+{
+   c_spdif_rx :&gt; data;
+
+   if(badParity(data)
+     continue;
+
+   tag = data & 0xF;
+
+   /* Extract 24bit audio sample */
+   sample = (data &lt;&lt; 4) & 0xFFFFFF00;
+
+   switch(tag)
+   {
+     case FRAME_X:
+     case FRAME_X:
+       // Store left
+       break;
+
+     case FRAME_Z:
+       // Store right
+       break;
+   }
+}
+</pre>
+</div></div><span id="document-sw_adat"></span><h2 class="topic" id="adat-receive">ADAT Receive</h2>
+<div><p>The ADAT receive component receives up to eight channels of audio at a sample rate
+of 44.1kHz or 48kHz. The API for calling the receiver functions is
+described in <a class="reference" href="page3.html#usb-audio-sec-component-api"><span>Component API</span></a>.</p>
+<p>The component outputs 32 bits words split into nine word frames. The
+frames are laid out in the following manner:</p>
+<blockquote>
+<div><ul>
+<li>Control byte</li>
+<li>Channel 0 sample</li>
+<li>Channel 1 sample</li>
+<li>Channel 2 sample</li>
+<li>Channel 3 sample</li>
+<li>Channel 4 sample</li>
+<li>Channel 5 sample</li>
+<li>Channel 6 sample</li>
+<li>Channel 7 sample</li>
+</ul>
+</div></blockquote>
+<p>Example of code show how to read the output of the ADAT component is shown below:</p>
+<pre class="snip-multi-inline">
+control = inuint(oChan);
+
+for(int i = 0; i &lt; 8; i++)
+{
+    sample[i] = inuint(oChan);
+}
+</pre>
+<p>Samples are 24-bit values contained in the lower 24 bits of the word.</p>
+<p>The control word comprises four control bits in bits [11..8] and the value 0b00000001 in bits [7..0].
+This control word enables synchronization at a higher level, in that on the channel a single odd
+word is always read followed by eight words of data.</p>
+<h3 id="integration">Integration</h3>
+<div><p>Since the ADAT is a digital stream the devices master clock must synchronised to it.  This is
+typically achieved with an external fractional-n clock multiplier.</p>
+<p>The ADAT receive function communicates with the clockGen component which passes audio data onto the
+audio driver and handles locking to the ADAT clock source if required.</p>
+</div></div><span id="document-sw_clocking"></span><h2 class="topic" id="external-clock-recovery-clockgen"><span id="usb-audio-sec-clock-recovery"></span>External Clock Recovery (ClockGen)</h2>
+<div><p>An application can either provide fixed master clock sources via selectable oscillators, clock
+generation IC, etc, to provide the audio master or use an external PLL/Clock Multiplier to
+generate a master clock based on reference from the XMOS device.</p>
+<p>Using an external PLL/Clock Multiplier allows the design to lock to an external clock source
+from a digital stream (e.g. S/PDIF or ADAT input).</p>
+<p>The clock recovery core (clockGen) is responsible for generating the reference frequency
+to the Fractional-N Clock Generator. This, in turn, generates the master clock used over the
+whole design.</p>
+<p>When running in <em>Internal Clock</em> mode this core simply generates this clock using a local
+timer, based on the XMOS reference clock.</p>
+<p>When running in an external clock mode (i.e. S/PDIF Clock&#8221; or &#8220;ADAT Clock&#8221; mode) digital
+samples are received from the S/PDIF and/or ADAT receive core.</p>
+<p>The external frequency is calculated through counting samples in a given period. The
+reference clock to the Fractional-N Clock Multiplier is then generated based on this
+external stream.  If this stream becomes invalid, the timer event will fire to ensure that
+valid master clock generation continues regardless of cable unplugs etc.</p>
+<p>This core gets clock selection Get/Set commands from Endpoint 0 via the <tt class="docutils literal"><span class="pre">c_clk_ctl</span></tt>
+channel.  This core also records the validity of external clocks, which is also queried
+through the same channel from Endpoint 0.</p>
+<p>This core also can cause the decouple core to request an interrupt packet on change of
+clock validity.  This functionality is based on the Audio Class 2.0 status/interrupt endpoint
+feature.</p>
+</div><span id="document-sw_midi"></span><h2 class="topic" id="midi">MIDI</h2>
+<div><p>The MIDI driver implements a 31250 baud UART input and output. On receiving 32-bit USB MIDI events
+from the <tt class="docutils literal"><span class="pre">buffer</span></tt> core, it parses these and translates them to 8-bit MIDI messages which are sent
+over UART. Similarly, incoming 8-bit MIDI messages are aggregated into 32-bit USB-MIDI events an
+passed on to the <tt class="docutils literal"><span class="pre">buffer</span></tt> core. The MIDI core is implemented in the file <tt class="docutils literal"><span class="pre">usb_midi.xc</span></tt>.</p>
+</div><span id="document-sw_resource"></span><h2 class="topic" id="resource-usage"><span id="usb-audio-sec-resource-usage"></span>Resource Usage</h2>
+<div><p>The following table details the resource usage of each
+component of the reference design software.</p>
+<div class="figure"><div class="topic caption"><span>Resource Usage</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="24%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Component</p>
+</th>
+<th class="head"><p>Cores</p>
+</th>
+<th class="head"><p>Memory (KB)</p>
+</th>
+<th class="head"><p>Ports</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>XUD library</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>9 (6 code)</p>
+</td>
+<td><p>ULPI ports</p>
+</td>
+</tr>
+<tr><td><p>Endpoint 0</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>17.5 (10.5 code)</p>
+</td>
+<td><p>none</p>
+</td>
+</tr>
+<tr><td><p>USB Buffering</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>22.5 (1 code)</p>
+</td>
+<td><p>none</p>
+</td>
+</tr>
+<tr><td><p>Audio driver</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>8.5 (6 code)</p>
+</td>
+<td><p>See <a class="reference" href="page2.html#usb-audio-sec-audio"><span>Audio Driver</span></a></p>
+</td>
+</tr>
+<tr><td><p>S/PDIF Tx</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>3.5 (2 code)</p>
+</td>
+<td><p>1 x 1 bit port</p>
+</td>
+</tr>
+<tr><td><p>S/PDIF Rx</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>3.7 (3.7 code)</p>
+</td>
+<td><p>1 x 1 bit port</p>
+</td>
+</tr>
+<tr><td><p>ADAT Rx</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>3.2 (3.2 code)</p>
+</td>
+<td><p>1 x 1 bit port</p>
+</td>
+</tr>
+<tr><td><p>Midi</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>6.5 (1.5 code)</p>
+</td>
+<td><p>2 x 1 bit ports</p>
+</td>
+</tr>
+<tr><td><p>Mixer</p>
+</td>
+<td><p>2</p>
+</td>
+<td><p>8.7 (6.5 code)</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>ClockGen</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>2.5 (2.4 code)</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">These resource estimates are based on the multichannel reference design with
+all options of that design enabled. For fewer channels, the resource
+usage is likely to decrease.</p>
+<p class="note">The XUD library requires an 80MIPS core to function correctly
+(i.e. on a 500MHz part only six cores can run).</p>
+<p class="note">The ULPI ports are a fixed set of ports on the L-Series
+device. When using these ports, other ports are
+unavailable when ULPI is active. See the <a class="reference" href="http://www.xmos.com/published/xs1lcheck"><span>XS1-L Hardware Design Checklist</span></a>  for further details.</p>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page0.html">USB Audio Solution Overview</a></li>
+             <li><a href="page1.html">USB Audio Hardware Platforms</a></li>
+             <li><a href="page6.html">Features & Options</a></li>
+             <li><a href="page4.html">USB Audio Programming Guide</a></li>
+             <li><a href="page5.html">USB Audio Applications</a></li>
+             <li><a href="page3.html">USB Audio API Reference</a></li>
+             <li><a href="page7.html">Frequently Asked Questions</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

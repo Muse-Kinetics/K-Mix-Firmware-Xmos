@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Features &amp; Options &mdash; USB Audio Design Guide v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="USB Audio Design Guide v documentation" href="index.html" />
+    <link rel="next" title="Device Firmware Upgrade (DFU)" href="page6.html#document-sw_dfu" />
+    <link rel="prev" title="Resource Usage" href="page2.html#document-sw_resource" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>Features &amp; Options</h1>
+
+             <div class='columns'>
+            
+  <p>This section looks at some of the available features of the USB Audio design.</p>
+<span id="document-sw_dfu"></span><h2 class="topic" id="device-firmware-upgrade-dfu"><span id="usb-audio-sec-dfu"></span>Device Firmware Upgrade (DFU)</h2>
+<div><p>The DFU interface handles updates to the boot image of the device. The DFU code is called from
+the Endpoint 0 core.</p>
+<p>The interface links USB to the XMOS flash user library (see <a class="reference" href="/doc/XM-000953-PC/latest#libflash-api"><span>libflash API</span></a>). In Application
+mode the DFU can accept commands to reset the device into DFU mode. There are two ways to do this:</p>
+<ul>
+<li>The host can send a <tt class="docutils literal"><span class="pre">DETACH</span></tt> request and then reset the
+device. If the device is reset by the host within a specified
+timeout, it will start in DFU mode (this is initially set to
+one second and is configurable from the host).</li>
+<li>The host can send a custom user request
+<tt class="docutils literal"><span class="pre">XMOS_DFU_RESETDEVICE</span></tt> to the DFU interface that
+resets the device immediately into DFU mode.</li>
+</ul>
+<p>Once the device is in DFU mode. The DFU interface can accept commands defined by the
+<a class="reference" href="http://www.usb.org/developers/devclass_docs/DFU_1.1.pdf*USB"><span>DFU 1.1 class specification</span></a>. In
+addition the interface accepts the custom command <tt class="docutils literal"><span class="pre">XMOS_DFU_REVERTFACTORY</span></tt> which reverts the active
+boot image to the factory image. Note that the XMOS specific command request
+identifiers are defined in <tt class="docutils literal"><span class="pre">dfu_types.h</span></tt> within <tt class="docutils literal"><span class="pre">module_dfu</span></tt>.</p>
+</div><span id="document-sw_usb_audio_class"></span><h2 class="topic" id="usb-audio-class-version-support">USB Audio Class Version Support</h2>
+<div><p>The XMOS USB Audio framework supports both USB Audio Class 1.0 and Audio Class 2.0.</p>
+<p>USB Audio Class 2.0 offers many improvements over USB Audio Class 1.0, most notable is the complete support for high-speed operation.  This means that Audio Class devices are no longer limited to full-speed operation allowing greater channel counts, sample frequencies and sample bit-depths. Additional improvement, amoungst others, include:</p>
+<ul>
+<li>Added support for multiple clock domains, clock description and clock control</li>
+<li>Extensive support for interrupts to inform the host about dynamic changes that occur to different entities such as Clocks etc</li>
+</ul>
+<h3 id="driver-support">Driver Support</h3>
+<div><h4 id="audio-class-1-0">Audio Class 1.0</h4>
+<div><p>Audio Class 1.0 is fully supported in Apple OSX.  Audio Class 1.0 is fully supported in all modern Microsoft Windows operating systems (i.e. Windows XP and later).</p>
+</div><h4 id="audio-class-2-0">Audio Class 2.0</h4>
+<div><p>Audio Class 2.0 is fully supported in Apple OSX since version 10.6.4.  Audio Class 2.0 is not supported natively by Windows operating systems. It is therefore required that a driver is installed.  Documentation of Windows drivers is beyond the scope of this document, please contact XMOS for further details.</p>
+</div></div><h3 id="audio-class-1-0-mode-and-fall-back">Audio Class 1.0 Mode and Fall-back</h3>
+<div><p>The normal default for XMOS USB Audio applications is to run as a high-speed Audio Class 2.0
+device. However, some products may prefer to run in Audio Class 1.0 mode, this is normally to
+allow &#8220;driver-less&#8221; operation with Windows operating systems.</p>
+<p class="note">To ensure specification compliance, Audio Class 1.0 mode <em>always</em> operates at full-speed USB.</p>
+<p>The device will operate in full-speed Audio Class 1.0 mode if one of the following is true:</p>
+<ul>
+<li>The code is compiled for USB Audio Class 1.0 only.</li>
+<li>The code is compiled for USB Audio Class 2.0 and it is connected
+to the host over a full speed link (and the Audio Class fall back is
+enabled).</li>
+</ul>
+<p>The options to control this behavior are detailed in <a class="reference" href="#usb-audio-sec-custom-defines-api"><span>Custom Defines</span></a>.</p>
+<p>When running in Audio Class 1.0 mode the following restrictions are applied:</p>
+<ul>
+<li>MIDI is disabled.</li>
+<li>DFU is disabled (Since Windows operating systems would prompt for a DFU driver to be installed)</li>
+</ul>
+<p>Due to bandwidth limitations of full-speed USB the following sample-frequency restrictions are also applied:</p>
+<ul>
+<li>Sample rate is limited to a maximum of 48kHz if both input and output are enabled.</li>
+<li>Sample rate is limited to a maximum of 96kHz if only input <em>or</em> output is enabled.</li>
+</ul>
+</div></div><span id="document-sw_hid"></span><h2 class="topic" id="audio-controls-via-human-interface-device-hid">Audio Controls via Human Interface Device (HID)</h2>
+<div><p>The design supports simple audio controls such as play/pause, volume up/down etc via the USB Human
+Interface Device Class Specification.</p>
+<p>This functionality is enabled by setting the <tt class="docutils literal"><span class="pre">HID_CONTROLS</span></tt> define to <tt class="docutils literal"><span class="pre">1</span></tt>.  Setting to <tt class="docutils literal"><span class="pre">0</span></tt>
+disables this feature.</p>
+<p>When turned on the following items are enabled:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>HID descriptors are enabled in the Configuration Descriptor informing the host that the device has HID interface</li>
+<li>A Get Report Descriptor request is enabled in <tt class="docutils literal"><span class="pre">endpoint0</span></tt>.</li>
+<li>Endpoint data handling is enabled in the <tt class="docutils literal"><span class="pre">buffer</span></tt> core</li>
+</ol>
+</div></blockquote>
+<p>The Get Descriptor Request enabled in endpoint 0 returns the report descriptor for the HID device.
+This details the format of the HID reports returned from the device to the host.  It maps a bit in
+the report to a function such as play/pause.</p>
+<p>The USB Audio Framework implements a report descriptor that should fit most basic audio device controls.
+If further controls are necessary the HID Report Descriptor in <tt class="docutils literal"><span class="pre">descriptors.h</span></tt> should be modified.
+The default report size is 1 byte with the format as follows:</p>
+<div class="figure"><div class="topic caption"><span>Default HID Report Format</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Bit</p>
+</th>
+<th class="head"><p>Function</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>0</p>
+</td>
+<td><p>Play/Pause</p>
+</td>
+</tr>
+<tr><td><p>1</p>
+</td>
+<td><p>Scan Next Track</p>
+</td>
+</tr>
+<tr><td><p>2</p>
+</td>
+<td><p>Scan Prev Track</p>
+</td>
+</tr>
+<tr><td><p>3</p>
+</td>
+<td><p>Volume Up</p>
+</td>
+</tr>
+<tr><td><p>4</p>
+</td>
+<td><p>Volume Down</p>
+</td>
+</tr>
+<tr><td><p>5</p>
+</td>
+<td><p>Mute</p>
+</td>
+</tr>
+<tr><td><p>6-7</p>
+</td>
+<td><p>Unused</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>On each HID report request from the host the function <tt class="docutils literal"><span class="pre">Vendor_ReadHidButtons(unsigned</span> <span class="pre">char</span> <span class="pre">hidData[])</span></tt> is called from <tt class="docutils literal"><span class="pre">buffer()</span></tt>.  This function is passed an array <tt class="docutils literal"><span class="pre">hidData[]</span></tt> by reference.  The programmer should report the state of his buttons into this array. For example, if a volume up command is desired, bit 3 should be set to 1, else 0.</p>
+<p>Since the <tt class="docutils literal"><span class="pre">Vendor_ReadHidButtons()</span></tt> function is called from the <tt class="docutils literal"><span class="pre">buffer</span></tt> logical core, care should be taken not to add to much execution time to this function since this could cause issues with servicing other endpoints.</p>
+<p>For a full example please see the HID section in <a class="reference" href="page5.html#usb-audio-sec-l1-audio-sw"><span>USB Audio 2.0 Reference Design (L-Series) Application</span></a>.</p>
+</div><span id="document-sw_iap"></span><h2 class="topic" id="apple-mfi-compatibility">Apple MFi compatibility</h2>
+<div><p>XMOS devices are capable of operating with Apple iPod, iPhone, and iPad devices
+that feature USB host support. Information regarding this functionality is
+protected by the Made For iPod (MFi) program and associated licensing.</p>
+<p>Please contact XMOS for details and further documentation.</p>
+</div><span id="document-feat_audio_formats"></span><h2 class="topic" id="audio-stream-formats">Audio Stream Formats</h2>
+<div><p>The design currently supports up to 3 different stream formats for output/playback, selectable at
+run time.  This is implemented using Alternative Settings to the AudioStreaming interfaces.</p>
+<p>An AudioStreaming interface can have Alternate Settings that can be used to change certain characteristics
+of the interface and underlying endpoint. A typical use of Alternate Settings is to provide a way to
+change the subframe size and/or number of channels on an active AudioStreaming interface.
+Whenever an AudioStreaming interface requires an isochronous data endpoint, it must at least provide
+the default Alternate Setting (Alternate Setting 0) with zero bandwidth requirements (no isochronous
+data endpoint defined) and an additional Alternate Setting that contains the actual isochronous
+data endpoint.</p>
+<p>For further information refer to 3.16.2 of <a class="reference" href="http://www.usb.org/developers/devclass_docs/Audio2.0_final.zip"><span>USB Audio Device Class Definition for Audio Devices</span></a></p>
+<p>Note, a 0-bandwidth alternative setting 0 is always implmented by the design (as required by the USB
+specifications).</p>
+<p>Customisatble parameters for the Alternate Settings are as follows.:</p>
+<blockquote>
+<div><ul>
+<li>Audio sample resolution</li>
+<li>Audio sample subslot size</li>
+<li>Audio data format</li>
+</ul>
+</div></blockquote>
+<p class="note">Currently only a single format is supported for the input/recording stream</p>
+<h3 id="audio-subslot">Audio Subslot</h3>
+<div><p>An audio subslot holds a single audio sample. See <a class="reference" href="http://www.usb.org/developers/devclass_docs/Audio2.0_final.zip"><span>USB Device Class Definition for Audio Data Formats</span></a> for full details.
+This is represented by <cite>bSubslotSize</cite> in the devices descriptors</p>
+<p>An audio subslot always contains an integer number of bytes. The specification limits the possible
+audio sublot size (<cite>bSubslotSize</cite>) to 1, 2, 3 or 4 bytes per audio subslot.</p>
+<p>Typically, since it is run on a 32-bit machine, the value 4 is used for subslot - this means that
+packing/unpacking samples is trivial.  Other values can be used (currently 4, 3 and 2 are supported
+by the design).</p>
+<p>Other values may be used for the the following reasons:</p>
+<blockquote>
+<div><ul>
+<li>Bus-bandwidth needs to be efficiently utilised. For example maximising channel-count/sample-rates in
+full-speed operation.</li>
+<li>To support restrictions with certain hosts. For example many Android based hosts support only 16bit
+samples in a 2-byte subslot.</li>
+</ul>
+</div></blockquote>
+<p>bSubSlot size is set using the following defines:</p>
+<blockquote>
+<div><ul>
+<li>When running in high-speed:<ul>
+<li><cite>HS_STREAM_FORMAT_OUTPUT_1_SUBSLOT_BYTES</cite></li>
+<li><cite>HS_STREAM_FORMAT_OUTPUT_2_SUBSLOT_BYTES</cite></li>
+<li><cite>HS_STREAM_FORMAT_OUTPUT_3_SUBSLOT_BYTES</cite></li>
+</ul>
+</li>
+<li>When running in full-speed:<ul>
+<li><cite>FS_STREAM_FORMAT_OUTPUT_1_SUBSLOT_BYTES</cite></li>
+<li><cite>FS_STREAM_FORMAT_OUTPUT_2_SUBSLOT_BYTES</cite></li>
+<li><cite>FS_STREAM_FORMAT_OUTPUT_3_SUBSLOT_BYTES</cite></li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</div><h3 id="audio-sample-resolution">Audio Sample Resolution</h3>
+<div><p>An audio sample is represented using a number of bits (<cite>bBitResolution</cite>) less than or equal to the number
+of total bits available in the audio subslot i.e. <cite>bBitResolution</cite> &lt;= <cite>bSubslotSize</cite> * 8.  Supported values
+are 16, 24 and 32.</p>
+<p>The following defines</p>
+<blockquote>
+<div><ul>
+<li>The following defines affect high-speed operation:<ul>
+<li><cite>HS_STREAM_FORMAT_OUTPUT_1_RESOLUTION_BITS</cite></li>
+<li><cite>HS_STREAM_FORMAT_OUTPUT_2_RESOLUTION_BITS</cite></li>
+<li><cite>HS_STREAM_FORMAT_OUTPUT_3_RESOLUTION_BITS</cite></li>
+</ul>
+</li>
+<li>The following defines affect full-speed operation:<ul>
+<li><cite>FS_STREAM_FORMAT_OUTPUT_1_RESOLUTION_BITS</cite></li>
+<li><cite>FS_STREAM_FORMAT_OUTPUT_2_RESOLUTION_BITS</cite></li>
+<li><cite>FS_STREAM_FORMAT_OUTPUT_3_RESOLUTION_BITS</cite></li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</div><h3 id="audio-format">Audio Format</h3>
+<div><p>The design supports two audio formats, PCM and Direct Stream Digital (DSD).
+A DSD capable DAC is required for the latter.</p>
+<p>The USB Audio Raw Data format is used to indicate DSD data (2.3.1.7.5 of <a class="reference" href="http://www.usb.org/developers/devclass_docs/Audio2.0_final.zip"><span>USB Device Class
+Definition for Audio Data Formats</span></a>).
+This use of a RAW/DSD format in an alternative setting is termed <em>Native DSD</em></p>
+<p>The following defines affect both full-speed and high-speed operation:</p>
+<blockquote>
+<div><ul>
+<li>STREAM_FORMAT_OUTPUT_1_DATAFORMAT</li>
+<li>STREAM_FORMAT_OUTPUT_2_DATAFORMAT</li>
+<li>STREAM_FORMAT_OUTPUT_3_DATAFORMAT</li>
+</ul>
+</div></blockquote>
+<p>The following options are supported:</p>
+<blockquote>
+<div><ul>
+<li>UAC_FORMAT_TYPEI_RAW_DATA</li>
+<li>UAC_FORMAT_TYPEI_PCM</li>
+</ul>
+</div></blockquote>
+<p class="note">Currently DSD is only supported on the output/playback stream</p>
+<p class="note">4 byte slot size with a 32 bit resolution is required for RAW/DSD format</p>
+<p>Native DSD requires driver support and is available in the Thesycon Windows driver via ASIO.</p>
+</div></div><h2 class="topic" id="dsd-over-pcm-dop">DSD over PCM (DoP)</h2>
+<div><p>While Native DSD support is available in Windows though a driver, OSX incorporates a USB driver
+that only supports PCM, this is also true of the central audio engine, CoreAudio.  It is
+therefore not possible to use the scheme defined above using the built in driver support of OSX.</p>
+<p>Since the Apple OS only allows a PCM path a method of transporting DSD audio data over PCM frames
+has been developed.  This data can then be sent via the native USB Audio support.</p>
+<p>The XMOS USB Audio design(s) implement the method described in <a class="reference" href="http://dsd-guide.com/sites/default/files/white-papers/DoP_openStandard_1v1.pdf"><span>DoP Open Standard 1.1</span></a></p>
+<p>Standard DSD  has a sample size of 1 bit and a sample rate of 2.8224MHz - this is 64x the speed of CD.
+This equates to the same data-rate as a 16 bit PCM stream at 176.4kHz.</p>
+<p>In order to clearly identify when this PCM stream contains DSD and when it contains PCM some header
+bits are added to the sample.  A 24-bit PCM stream is therefore used, with the most significant
+byte being used for a DSD marker (alternating 0x05 and 0xFA values).</p>
+<p>When enabled, if USB audio design detects a un-interrupted run of these samples (above a defined
+threshold) it switches to DSD mode, using the lower 16-bits as DSD sample data.  When this check for
+DSD headers fails the design falls back to PCM mode.  DoP detection and switching is done completely
+in the Audio/I2S core (<cite>audio.xc</cite>). All other code handles the audio samples as PCM.</p>
+<p>The design supports higher DSD/DoP rates (i.e. DSD128) by simply raising the underlying PCM sample
+rate e.g. from 176.4kHz to 352.8kHz. The marker byte scheme remains exactly the same regardless
+of rate.</p>
+<p class="note">DoP requires bit-perfect transmission - therefore any audio/volume processing will break the stream.</p>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page0.html">USB Audio Solution Overview</a></li>
+             <li><a href="page1.html">USB Audio Hardware Platforms</a></li>
+             <li><a href="page2.html">USB Audio Software Architecture</a></li>
+             <li><a href="page4.html">USB Audio Programming Guide</a></li>
+             <li><a href="page5.html">USB Audio Applications</a></li>
+             <li><a href="page3.html">USB Audio API Reference</a></li>
+             <li><a href="page7.html">Frequently Asked Questions</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

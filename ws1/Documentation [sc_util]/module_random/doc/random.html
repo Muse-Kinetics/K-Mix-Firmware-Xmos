@@ -1,0 +1,119 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Random number generation module &mdash; Random number generation module v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="Random number generation module v documentation" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>Random number generation module</h1>
+
+             <div class='columns'>
+            
+  <p>This module provides a random number generator that can be seeded from
+the hardware. The module can be used by including <tt class="docutils literal"><span class="pre">module_random</span></tt> in
+the <tt class="docutils literal"><span class="pre">USED_MODULES</span></tt> variable in an application Makefile and then
+including the <tt class="docutils literal"><span class="pre">random.h</span></tt> header.</p>
+<p>The random number generator uses a CRC for generation which is
+fast in terms of performance and code size and produces reasonably
+good random numbers.  The generation algorithm is equivalent to a
+Linear Feedback Shift Registor and has a cycle of 2<sup><span>32</span></sup>.</p>
+<h2 class="topic" id="api">API</h2>
+<div><p>Configuration defines can be set by creating a file called
+<tt class="docutils literal"><span class="pre">random_conf.h</span></tt> in the application that uses the module.</p>
+<p>The module works by creating generators of type
+<tt class="docutils literal"><span class="pre">random_generator_t</span></tt>. These generators can be used to create random
+numbers (which updates the state of the generator.</p>
+<ul class='lib'><li class="type">
+<h2 id="random_generator_t">
+<tt class="descname">random_generator_t</tt></h2>
+<p>Type representing a random number generator.</p>
+</li>
+
+<li class="function">
+<h2 id="random_create_generator_from_seed">
+random_generator_t <tt class="descname">random_create_generator_from_seed</tt><big>(</big>unsigned<em>&nbsp;seed</em><big>)</big></h2>
+<p>Function that creates a random number generator from a seed.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>seed</h2>
+<p>seed for the generator.</p>
+</li>
+</ul>
+</div><h3 class="nosecnum compact" id="">Returns</h3>
+<div><p>a random number generator.</p>
+</div></li>
+
+<li class="function">
+<h2 id="random_create_generator_from_hw_seed">
+random_generator_t <tt class="descname">random_create_generator_from_hw_seed</tt><big>(</big>void<big>)</big></h2>
+<p>Function that attempts to create a random number generator from a true random value into the seed, using an asynchronous timer.</p>
+<p>To use this function you must enable the <tt class="docutils literal"><span class="pre">RANDOM_ENABLE_HW_SEED</span></tt> define in your application&#8217;s <tt class="docutils literal"><span class="pre">random_conf.h</span></tt>.</p>
+<h3 class="nosecnum compact" id="">Returns</h3>
+<div><p>a random number generator.</p>
+</div></li>
+
+<li class="function">
+<h2 id="random_get_random_number">
+unsigned <tt class="descname">random_get_random_number</tt><big>(</big><a class="reference" href="#random_generator_t" title="random_generator_t"><span>random_generator_t</span></a><em>&nbsp;&amp;g</em><big>)</big></h2>
+<p>Function that produces a random number.</p>
+<p>The number has a cycle of 2^32 and is produced using a LFSR.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>g</h2>
+<p>the used generator to produce the seed.</p>
+</li>
+</ul>
+</div><h3 class="nosecnum compact" id="">Returns</h3>
+<div><p>a random 32 bit number.</p>
+</div></li>
+
+</ul><p>For hardware generated seed the following define should be used:</p>
+<blockquote>
+<div><ul class='lib'><li class="macro">
+<h2 id="RANDOM_ENABLE_HW_SEED">
+<tt class="descname">RANDOM_ENABLE_HW_SEED</tt></h2>
+<p>This define controls whether hardware seeded random numbers can be used.</p>
+<p>By setting this define, one of the devices ring oscillators will be set running at startup and then can be used later on to seed a random number generator.</p>
+</li>
+
+</ul></div></blockquote>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

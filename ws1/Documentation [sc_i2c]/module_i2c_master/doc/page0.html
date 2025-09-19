@@ -1,0 +1,112 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Resource Requirements &mdash; I2C Master (Using 1-bit Ports) Component v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="I2C Master (Using 1-bit Ports) Component v documentation" href="index.html" />
+    <link rel="next" title="Evaluation Platforms" href="page1.html" />
+    <link rel="prev" title="I2C Master (Using 1-bit Ports) Component" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>Resource Requirements</h1>
+
+             <div class='columns'>
+            
+  <p>The following resources on the xCORE Tile are used:</p>
+<h2 class="topic" id="resources">Resources</h2>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Operation</p>
+</th>
+<th class="head"><p>Resource Type</p>
+</th>
+<th class="head"><p>Number required</p>
+</th>
+<th class="head"><p>Notes</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>I2C master SCL</p>
+</td>
+<td><p>1 bit port (output)</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>I2C master clock, needs external pull-up</p>
+</td>
+</tr>
+<tr><td><p>I2C Master SDA</p>
+</td>
+<td><p>1 bit port</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>data line, needs external pull-up</p>
+</td>
+</tr>
+<tr><td><p>I2C IO timing</p>
+</td>
+<td><p>timers</p>
+</td>
+<td><p>2</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div><h2 class="topic" id="memory">Memory</h2>
+<div><p>The whole library uses approximately 1500 Bytes.</p>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page1.html">Evaluation Platforms</a></li>
+             <li><a href="page2.html">Programming Guide</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

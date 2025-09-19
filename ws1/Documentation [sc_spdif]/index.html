@@ -1,0 +1,119 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--XDE partnum="XM-000050-SW" version="1.3.2rc1"-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>S/PDIF &mdash; S/PDIF v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="S/PDIF v documentation" href="#" />
+    <link rel="next" title="sc_spdif Change Log" href="changelog.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>S/PDIF</h1>
+
+             <div class='columns'>
+            
+  <ul class="field_list"><li><h2>Version</h2>
+<p><p>1.3.2rc1</p>
+</p>
+</li>
+<li><h2>Vendor</h2>
+<p><p>XMOS</p>
+</p>
+</li>
+<li><h2>Description</h2>
+<p><p>S/PDIF Component</p>
+</p>
+</li>
+</ul>
+<p>The two modules in this library are used to transmit and receive
+S/PDIF streams, <a class="reference" href="http://en.wikipedia.org/wiki/Spdif"><span>http://en.wikipedia.org/wiki/Spdif</span></a>. The rx_generator directory contains the programs that are used
+to generate the state machine used
+by the receiver.</p>
+<h2 class="topic" id="software-blocks">Software Blocks</h2>
+<div><dl class="docutils">
+<dt>app_example_rx (app_example_rx)</dt>
+<dd><p>app_example_rx</p>
+</dd>
+<dt>app_example_tx (app_example_tx)</dt>
+<dd><p>app_example_tx</p>
+</dd>
+<dt>module_spdif_tx (module_spdif_rx)</dt>
+<dd><p>S/PDIF transmit module</p>
+</dd>
+<dt>module_spdif_rx (module_spdif_tx)</dt>
+<dd><p>S/PDIF receive module</p>
+</dd>
+</dl>
+</div><h2 class="topic" id="documentation">Documentation</h2>
+<div><blockquote>
+<div><ul>
+<li><a class="reference" href="././doc/index.html"><span>S/PDIF Software Component</span></a> <a class="reference" href="././doc.pdf"><span>PDF</span></a></li>
+<li><a class="reference" href="././changelog.html"><span>Release Notes</span></a></li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="key-features">Key Features</h2>
+<div><ul>
+<li>RX and TX in separate threads</li>
+<li>Rates of 44,100 up to 192,000 Samples/sec</li>
+</ul>
+</div><h2 class="topic" id="firmware-overview">Firmware Overview</h2>
+<div><p>RX and TX are defined as functions which each run forever.</p>
+</div><h2 class="topic" id="known-issues">Known Issues</h2>
+<div><p>none</p>
+</div><h2 class="topic" id="required-software-dependencies">Required software (dependencies)</h2>
+<div><blockquote>
+<div><ul>
+<li>sc_i2c</li>
+<li>sc_util</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="support">Support</h2>
+<div><blockquote>
+<div><p>This package is support by XMOS Ltd. Issues can be raised against the software
+at:</p>
+<blockquote>
+<div><p><a class="reference" href="http://www.xmos.com/support"><span>http://www.xmos.com/support</span></a></p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

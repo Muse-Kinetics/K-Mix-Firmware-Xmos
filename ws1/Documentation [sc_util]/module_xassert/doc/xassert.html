@@ -1,0 +1,139 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>xassert Module &mdash;  v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title=" v documentation" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>xassert Module</h1>
+
+             <div class='columns'>
+            
+  <p>This module provides a lightweight and flexible replacement for the
+standard C header <tt class="docutils literal"><span class="pre">assert.h</span></tt>.</p>
+<p>The assertions in this module can be enabled/disabled
+and configured as to how much debug information they show. This
+configuration can be per &#8220;debug unit&#8221; (i.e. for sets of files).</p>
+<p>To use the module you need to use <tt class="docutils literal"><span class="pre">module_xassert</span></tt> in your application and
+include the <tt class="docutils literal"><span class="pre">xassert.h</span></tt> header.</p>
+<h2 class="topic" id="assertions">Assertions</h2>
+<div><p>An assertion can be inserted into code with the <tt class="docutils literal"><span class="pre">assert</span></tt> macro e.g.:</p>
+<pre class="snip-single-inline">
+assert(i &lt; n);
+</pre>
+<p>Optionally a debug message can be added with the <tt class="docutils literal"><span class="pre">msg</span></tt> macro:</p>
+<pre class="snip-single-inline">
+assert(i &lt; n && msg("i must be less than the array bound"));
+</pre>
+<p>If assertions are enabled and the expression in the assertion is false than a
+trap will occur.</p>
+</div><h2 class="topic" id="unreachable">Unreachable</h2>
+<div><p>If the logic of a program dictates that certain code cannot be reached, the
+<tt class="docutils literal"><span class="pre">unreachable</span></tt> macro can be used e.g.:</p>
+<pre class="snip-multi-inline">
+switch (message) {
+case 0:
+   ...
+case 1:
+   ...
+default:
+  unreachable("message must be 0 or 1");
+  break;
+}
+</pre>
+<p>If assertions are enabled then this macro will cause a trap if executed.</p>
+</div><h2 class="topic" id="fail">Fail</h2>
+<div><p>A failure can be indicated with the <tt class="docutils literal"><span class="pre">fail</span></tt> macro e.g.:</p>
+<pre class="snip-multi-inline">
+if (reg_value != 0xA5)
+  fail("device not connected properly")
+</pre>
+<p>A fail will always cause a trap if executed. A failure differs from
+unreachable in that an unreachable macro should never execute in a
+correct program whereas a fail could happen in catastrophic circumstances
+even if the program is correct.</p>
+</div><h2 class="topic" id="controlling-assertions">Controlling assertions</h2>
+<div><p>Assertions can be enabled/disabled in <tt class="docutils literal"><span class="pre">debug_conf.h</span></tt> in your application with the following defines.</p>
+<dl class="docutils">
+<dt>XASSERT_ENABLE_ASSERTIONS</dt>
+<dd><p>This define can be used to turn assertions on or off (defaults to 1).</p>
+</dd>
+<dt>XASSERT_ENABLE_DEBUG</dt>
+<dd><p>This define will cause assertions to print out the failing expression before
+trapping (defaults to 0). Note that this option could significantly increase
+the code size of your application.</p>
+</dd>
+<dt>XASSERT_ENABLE_LINE_NUMBERS</dt>
+<dd><p>This define will cause assertions to print the file and line number of the
+assertion before trapping. Note that this option could significantly increase
+the code size of your application.</p>
+</dd>
+</dl>
+<p>If <tt class="docutils literal"><span class="pre">DEBUG_UNIT</span></tt> is defined when <tt class="docutils literal"><span class="pre">xassert.h</span></tt> is included then all the
+assertions in that file belong to that unit. Assertions can then be
+controlled per debug unit. The mechanism is similar to that used in
+<tt class="docutils literal"><span class="pre">module_logging</span></tt>.</p>
+<dl class="docutils">
+<dt>XASSERT_ENABLE_ASSERTIONS_[debug unit]</dt>
+<dd><p>Enable asserts for a particular debug unit. If set to 1,
+this overrides the default set by <tt class="docutils literal"><span class="pre">XASSERT_ENABLE_ASSERTIONS</span></tt> for
+that debug unit.</p>
+</dd>
+<dt>XASSERT_ENABLE_DEBUG_[debug unit]</dt>
+<dd><p>Enable debug messages for a particular debug unit.  If set to 1,
+this overrides the default set by <tt class="docutils literal"><span class="pre">XASSERT_ENABLE_DEBUG</span></tt> for that
+debug unit .</p>
+</dd>
+<dt>XASSERT_DISABLE_ASSERTIONS_[debug unit]</dt>
+<dd><p>Disable asserts for a particular debug unit. If set to 1,
+this overrides the default set by <tt class="docutils literal"><span class="pre">XASSERT_ENABLE_ASSERTIONS</span></tt> for
+that debug unit.</p>
+</dd>
+<dt>XASSERT_DISABLE_DEBUG_[debug unit]</dt>
+<dd><p>Disable debug messages for a particular debug unit.  If set to 1,
+this overrides the default set by <tt class="docutils literal"><span class="pre">XASSERT_ENABLE_DEBUG</span></tt> for that
+debug unit .</p>
+</dd>
+</dl>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

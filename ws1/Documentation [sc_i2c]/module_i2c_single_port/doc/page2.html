@@ -1,0 +1,118 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Programmers guide to module_i2c_single_port &mdash; I2C Master (Using Single Multibit Port) Component v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="I2C Master (Using Single Multibit Port) Component v documentation" href="index.html" />
+    <link rel="prev" title="Evaluation Platforms" href="page1.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>Programmers guide to module_i2c_single_port</h1>
+
+             <div class='columns'>
+            
+  <p>This I2C module comprises four functions that implement I2C master. It is a
+small and simple version of the protocol with limitations (described
+below), and expects SCL and SDA on the same port.</p>
+<p>The three restrictions of this module are:</p>
+<ol class="arabic simple">
+<li>It does not implement clock-stretching: it should only be used when
+slaves do not attempt to stretch the clock.</li>
+<li>It does not implement multi-master: it should only be used when the
+XCore is the only master on the I2C bus.</li>
+<li>The speed of the bus is defined using a compile-time define
+(<tt class="docutils literal"><span class="pre">I2C_BIT_TIME</span></tt>).</li>
+</ol>
+<p>Note that on a single port it is impossible to implement clock stretching
+or multi-master.</p>
+<p>Any constants that are to be overridden should be defined in an include
+file <tt class="docutils literal"><span class="pre">i2c_conf.h</span></tt>.</p>
+<h2 class="topic" id="symbolic-constants">Symbolic constants</h2>
+<div><p class="warning">doxygendefine: Cannot find define &#8220;I2C_BIT_TIME&#8221; in doxygen xml output</p>
+<p class="warning">doxygendefine: Cannot find define &#8220;SCL_HIGH&#8221; in doxygen xml output</p>
+<p class="warning">doxygendefine: Cannot find define &#8220;SDA_HIGH&#8221; in doxygen xml output</p>
+<p class="warning">doxygendefine: Cannot find define &#8220;S_REST&#8221; in doxygen xml output</p>
+</div><h2 class="topic" id="api">API</h2>
+<div><ul class='lib'><li class="function">
+<h2 id="i2c_master_init">
+void <tt class="descname">i2c_master_init</tt><big>(</big>struct <a class="reference" href="api-master.html#r_i2c" title="r_i2c"><span>r_i2c</span></a><em>&nbsp;&amp;i2c_master</em><big>)</big></h2>
+<p>Function that initialises the ports on an I2C device.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>i2c_master</h2>
+<p>struct containing the clock and data ports. Both should be declared as unbuffered bidirectional ports.</p>
+</li>
+</ul>
+</div></li>
+
+</ul><p class="warning">doxygenfunction: Cannot find function &#8220;i2c_master_rx&#8221; in doxygen xml output</p>
+<ul class='lib'><li class="function">
+<h2 id="i2c_master_write_reg">
+int <tt class="descname">i2c_master_write_reg</tt><big>(</big>int<em>&nbsp;device</em>, int<em>&nbsp;reg_addr</em>, unsigned char<em>&nbsp;data[]</em>, int<em>&nbsp;nbytes</em>, struct <a class="reference" href="api-master.html#r_i2c" title="r_i2c"><span>r_i2c</span></a><em>&nbsp;&amp;i2c_master</em><big>)</big></h2>
+<p>Function that writes to a register on an I2C device.</p>
+<p>Note that this function uses the same interface as module_i2c but that the fields master_num and clock_mul are ignored by this function.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>device</h2>
+<p>Bus address of device, even number between 0x00 and 0xFE.</p>
+</li>
+<li><h2>reg_addr</h2>
+<p>Address of register to write to, value between 0x00 and 0x7F.</p>
+</li>
+<li><h2>data</h2>
+<p>Array where data is stored.</p>
+</li>
+<li><h2>nbytes</h2>
+<p>Number of bytes to read and store in data.</p>
+</li>
+<li><h2>i2c_master</h2>
+<p>struct containing the clock and data ports. Both should be declared as unbuffered bidirectional ports.</p>
+</li>
+</ul>
+</div></li>
+
+</ul></div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page0.html">I2C interface summary</a></li>
+             <li><a href="page1.html">Evaluation Platforms</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

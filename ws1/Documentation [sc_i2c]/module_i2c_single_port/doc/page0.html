@@ -1,0 +1,108 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>I2C interface summary &mdash; I2C Master (Using Single Multibit Port) Component v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="I2C Master (Using Single Multibit Port) Component v documentation" href="index.html" />
+    <link rel="next" title="Evaluation Platforms" href="page1.html" />
+    <link rel="prev" title="I2C Master (Using Single Multibit Port) Component" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>I2C interface summary</h1>
+
+             <div class='columns'>
+            
+  <p>I2C is the Philips 2 wire interface, used to configure many digital chips.
+I2C software has the following options:</p>
+<ul>
+<li>Whether we are a <em>master</em> or a <em>slave</em>. Devices that are configured are
+slaves, the master configures other devices.</li>
+<li>The speed supported. Normal speeds are 100 Kbps and 400 Kbps.</li>
+<li>Whether there is a single I2C bus or multiple I2C buses.</li>
+<li>Whether there is a single master or multiple masters.</li>
+<li>Whether clock stretching is supported.</li>
+</ul>
+<h2 class="topic" id="module-i2c-single-port">module_i2c_single_port</h2>
+<div><p>This module supports single master, at 100 or 400, 1000 kbps without clock
+stretching, where both SCL and SDA are shared on a single port (4, 8, 16,
+or 32 bits wide).</p>
+<table border="1" class="vertical-borders horizontal-borders docutils">
+<colgroup>
+<col width="37%" />
+<col width="15%" />
+<col width="15%" />
+<col width="33%" />
+</colgroup>
+<tbody valign="top">
+<tr><td rowspan="2"><p>Functionality provided</p>
+</td>
+<td colspan="2"><p>Resources required</p>
+</td>
+<td rowspan="2"><p>Status</p>
+</td>
+</tr>
+<tr><td><p>Ports</p>
+</td>
+<td><p>Memory</p>
+</td>
+</tr>
+<tr><td><p>Single master</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>360 bytes</p>
+</td>
+<td><p>Implemented</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The interface comprises four functions, init and reg_write
+that are called when required. No separate logical core is required.</p>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page1.html">Evaluation Platforms</a></li>
+             <li><a href="page2.html">Programmers guide to module_i2c_single_port</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

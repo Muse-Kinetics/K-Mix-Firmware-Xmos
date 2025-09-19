@@ -1,0 +1,677 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>USB Audio Programming Guide &mdash; USB Audio Design Guide v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="USB Audio Design Guide v documentation" href="index.html" />
+    <link rel="next" title="Getting Started" href="page4.html#document-prog_getting_started" />
+    <link rel="prev" title="Audio Stream Formats" href="page6.html#document-feat_audio_formats" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>USB Audio Programming Guide</h1>
+
+             <div class='columns'>
+            
+  <p>The following sections provide a guide on how to program the USB
+audio software platform including instructions for building and running
+programs and creating your own custom USB audio applications.</p>
+<span id="document-prog_getting_started"></span><h2 class="topic" id="getting-started">Getting Started</h2>
+<div><h3 id="building-and-running">Building and Running</h3>
+<div><div class="xde-inside">
+<ul class="iconmenu">
+  <li class="xde"><a class="xde-import" href="http://www.xmos.com/automate?automate=ImportComponent&partnum=XM-000011-SW">Import USB Audio L1 Reference Design</a></li>
+  <li class="xde"><a class="xde-import" href="http://www.xmos.com/automate?automate=ImportComponent&partnum=XM-000032-SW">Import USB Audio L2 Reference Design</a></li>
+</ul>
+</div><p>To build, select the relavant project (e.g. <tt class="docutils literal"><span class="pre">app_usb_aud_l1</span></tt>) in the
+Project Explorer and click the <strong>Build</strong> icon.</p>
+<p class="xde-outside">To install the software, open the xTIMEcomposer Studio and
+follow these steps:</p>
+<ol class="xde-outside arabic simple">
+<li>Choose <cite>File</cite> <strong>&gt;</strong> <cite>Import</cite>.</li>
+<li>Choose <cite>General</cite> <strong>&gt;</strong> <cite>Existing Projects into Workspace</cite> and
+click <strong>Next</strong>.</li>
+<li>Click <strong>Browse</strong> next to <cite>Select archive file</cite> and select
+the file firmware ZIP file.</li>
+<li>Make sure the projects you want to import are ticked in the
+<cite>Projects</cite> list. Import all the components and whichever
+applications you are interested in.</li>
+<li>Click <strong>Finish</strong>.</li>
+</ol>
+<p class="xde-outside">To build, select the relevant project (e.g. <tt class="docutils literal"><span class="pre">app_usb_aud_l1</span></tt>) in the
+Project Explorer and click the <strong>Build</strong> icon.</p>
+<p class="cmd-only">From the command line, you can follow these steps:</p>
+<blockquote class="cmd-only">
+<div><ol class="arabic">
+<li>To install, unzip the package zip.</li>
+<li>To build, change into the relevant application directory (e.g. <tt class="docutils literal"><span class="pre">app_usb_aud_l1</span></tt>) and execute the command:<pre class="snip-single-inline">
+xmake all
+</pre>
+</li>
+</ol>
+</div></blockquote>
+<p>The main Makefile for the project is in the app directory (e.g. <tt class="docutils literal"><span class="pre">app_usb_aud_l1</span></tt>). This file specifies build
+options and used modules. The Makefile uses the common build
+infrastructure in <tt class="docutils literal"><span class="pre">module_xmos_common</span></tt>. This system includes
+the source files from the relevant modules and is documented within
+<tt class="docutils literal"><span class="pre">module_xmos_common</span></tt>.</p>
+</div><h3 id="installing-the-application-onto-flash">Installing the application onto flash</h3>
+<div><p>To upgrade the firmware you must, firstly:</p>
+<ol class="arabic simple">
+<li>Plug the USB Audio board into your computer.</li>
+<li>Connect the xTAG-2 to the USB Audio board and plug the xTAG-2
+into your PC or Mac.</li>
+</ol>
+<p>To upgrade the flash from xTIMEcomposer Studio, follow these steps:</p>
+<ol class="arabic simple">
+<li>Start xTIMEcomposer Studio and open a workspace.</li>
+<li>Choose <em>File</em> <strong>&gt;</strong> <em>Import</em> <strong>&gt;</strong> <em>C/XC</em> <strong>&gt;</strong> <em>C/XC Executable</em>.</li>
+<li>Click <strong>Browse</strong> and select the new firmware (XE) file.</li>
+<li>Click <strong>Next</strong> and <strong>Finish</strong>.</li>
+<li>A Debug Configurations window is displayed. Click <strong>Close</strong>.</li>
+<li>Choose <em>Run</em> <strong>&gt;</strong> <em>Flash Configurations</em>.</li>
+<li>Double-click <em>xCORE application</em> to create a new Flash
+configuration.</li>
+<li>Browse for the XE file in the <em>Project</em> and
+<em>C/XC Application</em> boxes.</li>
+<li>Ensure the <em>xTAG-2</em> device appears in the target
+list.</li>
+<li>Click <strong>Flash</strong>.</li>
+</ol>
+<p class="cmd-only">From the command line:</p>
+<blockquote class="cmd-only">
+<div><ol class="arabic">
+<li>Open the XMOS command line tools (Desktop Tools Prompt) and
+execute the following command:<pre class="snip-single-inline">
+xflash &lt;binary&gt;.xe
+</pre>
+</li>
+</ol>
+</div></blockquote>
+</div></div><span id="document-prog_proj_structure"></span><h2 class="topic" id="project-structure">Project Structure</h2>
+<div><h3 id="applications-and-modules">Applications and Modules</h3>
+<div><p>The code is split into several module directories. The code for these
+modules can be included by adding the module name to the
+<tt class="docutils literal"><span class="pre">USED_MODULES</span></tt> define in an application Makefile:</p>
+<div class="figure"><div class="caption"><span>Modules used by USB Audio</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p>module_xud</p>
+</td>
+<td><p>Low level USB device library</p>
+</td>
+</tr>
+<tr><td><p>module_usb_shared</p>
+</td>
+<td><p>Common code for USB applications</p>
+</td>
+</tr>
+<tr><td><p>module_usb_device</p>
+</td>
+<td><p>Common code for USB device applications</p>
+</td>
+</tr>
+<tr><td><p>module_usb_audio</p>
+</td>
+<td><p>Common code for USB audio applications</p>
+</td>
+</tr>
+<tr><td><p>module_spdif_tx</p>
+</td>
+<td><p>S/PDIF transmit code</p>
+</td>
+</tr>
+<tr><td><p>module_spdif_rx</p>
+</td>
+<td><p>S/PDIF receive code</p>
+</td>
+</tr>
+<tr><td><p>module_adat_rx</p>
+</td>
+<td><p>ADAT receive code</p>
+</td>
+</tr>
+<tr><td><p>module_usb_midi</p>
+</td>
+<td><p>MIDI I/O code</p>
+</td>
+</tr>
+<tr><td><p>module_dfu</p>
+</td>
+<td><p>Device Firmware Upgrade code</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>There are multiple application directories that contain Makefiles that
+build into executables:</p>
+<div class="figure"><div class="caption"><span>USB Audio Reference Applications</span></div><table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p>app_usb_aud_l1</p>
+</td>
+<td><p>USB Audio 2.0 Reference Design application</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_l2</p>
+</td>
+<td><p>USB Audio 2.0 Multichannel Reference Design application</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_skc_u16</p>
+</td>
+<td><p>U16 SliceKit with Audio Slice application</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_xk_u8_2c</p>
+</td>
+<td><p>Multi-function Audio board application</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_skc_su1</p>
+</td>
+<td><p>DJ kit application</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></div></div><span id="document-prog_build_configs"></span><h2 class="topic" id="build-configurations">Build Configurations</h2>
+<div><p>Due to the flexibility of the framework there are many different build options.  For example input
+and output channel count, Audio Class version, interface types etc. A &#8220;build configuration&#8221; is
+a set of build options that combine to produce a certain feature set.</p>
+<p>Build configurations are listed in the application makefile with their associated options, they can
+be built within the xTIMEComposer GUI or via the command like as follows:</p>
+<pre class="snip-single-inline">
+xmake CONFIG=&lt;config name&gt;
+</pre>
+<p>When a reference design application is compiled using &#8220;build all&#8221; (<cite>xmake all</cite> on commane line) all
+configurations are automatically built.</p>
+<p>A naming scheme is employed to link a feature set to build config/binaries.  This scheme is described
+in the next section.</p>
+</div><h2 class="topic" id="configuration-naming-scheme"><span id="usb-audio-sec-valbuild"></span>Configuration Naming Scheme</h2>
+<div><p>This section describes the naming scheme for the default configurations (and therefore binaries)
+generated for each build configuration</p>
+<p>Each relevant build option is assigned a position in the string, with a character denoting the
+options value (normally &#8216;x&#8217; is used to denote &#8220;off&#8221; or &#8220;disabled&#8221;)</p>
+<p>For example, the table below lists the build options for the single tile L-Series Reference
+Design.</p>
+<div class="figure"><div class="topic caption"><span>Single tile L-Series build options</span></div><table border="1" class="docutils" id="l1-build-options">
+<colgroup>
+<col width="45%" />
+<col width="28%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Build Option Name</p>
+</th>
+<th class="head"><p>Options</p>
+</th>
+<th class="head"><p>Denoted by</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>Audio Class Version</p>
+</td>
+<td><p>1 or 2</p>
+</td>
+<td><p>1 or 2</p>
+</td>
+</tr>
+<tr><td><p>Audio Input</p>
+</td>
+<td><p>on or off</p>
+</td>
+<td><p>i or x</p>
+</td>
+</tr>
+<tr><td><p>Audio Output</p>
+</td>
+<td><p>on or off</p>
+</td>
+<td><p>o or x</p>
+</td>
+</tr>
+<tr><td><p>MIDI</p>
+</td>
+<td><p>on or off</p>
+</td>
+<td><p>m or x</p>
+</td>
+</tr>
+<tr><td><p>S/PDIF Output</p>
+</td>
+<td><p>on or off</p>
+</td>
+<td><p>s or x</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><p>For example a binary named 2ioxs would indicate Audio Class 2.0 with input and output enabled, MIDI
+disabled, SPDIF output enabled.</p>
+</div><h2 class="topic" id="validated-build-options">Validated Build Options</h2>
+<div><p>It is not possible for all possible build configuration permutations to be exhaustively tested.
+XMOS therefore test a subset of build configurations for proper behaviour, these are based on
+popular device configurations.</p>
+<p>Please see the various reference design sections for relevant validated build configurations.</p>
+</div><span id="document-prog_app_tutorial"></span><h2 class="topic" id="a-usb-audio-application">A USB Audio Application</h2>
+<div><p>This section provides a walk through of the single tile USB Audio Reference Design (L-Series)
+example, which can be found in the <tt class="docutils literal"><span class="pre">app_usb_aud_l1</span></tt> directory.</p>
+<p>In each application directory the <tt class="docutils literal"><span class="pre">src</span></tt> directory is arranged into two folders:</p>
+<p>#. An <tt class="docutils literal"><span class="pre">core</span></tt> directory containing source items that must be made available to the USB Audio
+framework</p>
+<ol class="arabic simple">
+<li>An <tt class="docutils literal"><span class="pre">extensions</span></tt> directory that includes extensions to the framework such as CODEC config etc</li>
+</ol>
+<p>The <tt class="docutils literal"><span class="pre">core</span></tt> folder for each application contains:</p>
+<ol class="arabic simple">
+<li>A <tt class="docutils literal"><span class="pre">.xn</span></tt> file to describe the hardware platform the app will run on</li>
+<li>A custom defines file: <tt class="docutils literal"><span class="pre">customdefines.h</span></tt> for framework configuration</li>
+</ol>
+<h3 id="custom-defines">Custom Defines</h3>
+<div><p>The <tt class="docutils literal"><span class="pre">customdefines.h</span></tt> file contains all the #defines required to tailor the USB audio framework
+to the particular application at hand.  Typically these over-ride default values in <cite>devicedefines.h</cite>
+in <cite>module_usb_audio</cite>.</p>
+<p>First there are defines to determine overall capability. For this appliction
+S/PDIF output and DFU are enabled. Note that <cite>ifndef</cite> is used to check that the option is not
+already defined in the makefile.</p>
+<pre>
+
+/* Enable/Disable MIDI - Default is MIDI off */
+#ifndef MIDI
+#define MIDI               (0)
+#endif
+
+/* Enable/Disable SPDIF - Default is SPDIF on */
+#ifndef SPDIF
+#define SPDIF              (1)
+#endif
+
+
+</pre>
+<p>Next, the file defines the audio properties of the application. This application has stereo in and
+stereo out with an S/PDIF output that duplicates analogue channels 1 and 2 (note channels are
+indexed from 0):</p>
+<pre>
+/* Number of USB streaming channels - Default is 2 in 2 out */
+#ifndef NUM_USB_CHAN_IN
+#define NUM_USB_CHAN_IN    (2)         /* Device to Host */
+#endif
+#ifndef NUM_USB_CHAN_OUT
+#define NUM_USB_CHAN_OUT   (2)         /* Host to Device */
+#endif
+
+/* Number of IS2 chans to DAC..*/
+#ifndef I2S_CHANS_DAC
+#define I2S_CHANS_DAC      (2)
+#endif
+
+/* Number of I2S chans from ADC */
+#ifndef I2S_CHANS_ADC
+#define I2S_CHANS_ADC      (2)
+#endif
+
+/* Index of SPDIF TX channel (duplicated DAC channels 1/2) */
+#define SPDIF_TX_INDEX     (0)
+
+
+</pre>
+<p>The file then sets some defines for the master clocks on the hardware and the maximum sample-rate
+for the device.</p>
+<pre>
+
+/* Master clock defines (in Hz) */
+#define MCLK_441           (256*44100)   /* 44.1, 88.2 etc */
+#define MCLK_48            (512*48000)   /* 48, 96 etc */
+
+/* Maximum frequency device runs at */
+#ifndef MAX_FREQ
+#define MAX_FREQ           (192000)
+#endif
+
+
+</pre>
+<p>Finally, there are some general USB identification defines to be
+set. These are set for the XMOS reference design but vary per
+manufacturer:</p>
+<pre>
+#define VENDOR_ID          (0x20B1) /* XMOS VID */
+#define PID_AUDIO_2        (0x0002) /* L1 USB Audio Reference Design PID */
+#define PID_AUDIO_1        (0x0003) /* L1 USB Audio Reference Design PID */
+
+</pre>
+<p>For a full description of all the defines that can be set in
+<tt class="docutils literal"><span class="pre">customdefines.h</span></tt> see <a class="reference" href="page3.html#sec-custom-defines-api"><span>Configuration Defines</span></a></p>
+</div><h3 id="configuration-functions">Configuration Functions</h3>
+<div><p>In addition to the custom defines file, the application needs to provide implementations of user
+functions that are specific to the application.</p>
+<p>For <cite>app_usb_aud_l1</cite> the implementations can be found in <cite>audiohw.xc</cite>.</p>
+<p>Firstly, code is required to initialise the external audio hardware. In the case of the CODEC on
+the L1 Refence Design board there is no required action so the funciton is left empty:</p>
+<pre>
+void AudioHwInit(chanend ?c_codec)
+{
+    return;
+}
+
+</pre>
+<p>On every sample-rate change a call is made to <cite>AudioHwConfig()</cite>. In the case of the CODEC on the
+L1 Reference Design baord the CODEC must be reset and set the relevant clock input from the two
+oscillators on the board.</p>
+<p>Both the CODEC reset line and clock selection line are attached to the 32 bit port 32A. This is
+accessed through the <tt class="docutils literal"><span class="pre">port32A_peek</span></tt> and <tt class="docutils literal"><span class="pre">port32A_out</span></tt> functions:</p>
+<pre>
+#define PORT32A_PEEK(X) {asm("peek %0, res[%1]":"=r"(X):"r"(XS1_PORT_32A));}
+#define PORT32A_OUT(X)  {asm("out res[%0], %1"::"r"(XS1_PORT_32A),"r"(X));}
+
+
+</pre>
+<pre>
+/* Configures the CODEC for the required sample frequency.
+ * CODEC reset and frequency select are connected to port 32A
+ *
+ * Port 32A is shared with other functionality (LEDs etc) so we
+ * access via inline assembly. We also take care to retain the
+ * state of the other bits.
+ */
+void AudioHwConfig(unsigned samFreq, unsigned mClk, chanend ?c_codec, unsigned dsdMode,
+    unsigned samRes_DAC, unsigned samRes_ADC)
+{
+    timer t;
+    unsigned time;
+    unsigned tmp;
+
+    /* Put codec in reset and set master clock select appropriately */
+
+    /* Read current port output */
+    PORT32A_PEEK(tmp);
+
+    /* Put CODEC reset line low */
+    tmp &= (~P32A_COD_RST);
+
+    if ((samFreq % 22050) == 0)
+    {
+        /* Frequency select low for 441000 etc */
+        tmp &= (~P32A_CLK_SEL);
+    }
+    else //if((samFreq % 24000) == 0)
+    {
+        /* Frequency select high for 48000 etc */
+        tmp |= P32A_CLK_SEL;
+    }
+
+    PORT32A_OUT(tmp);
+
+    /* Hold in reset for 2ms */
+    t :&gt; time;
+    time += 200000;
+    t when timerafter(time) :&gt; int _;
+
+    /* Codec out of reset */
+    PORT32A_PEEK(tmp);
+    tmp |= P32A_COD_RST;
+    PORT32A_OUT(tmp);
+}
+
+</pre>
+<p>Finally, the application has functions for audio streaming start/stop
+that enable/disable an LED on the board (also on port 32A):</p>
+<pre>
+#include &lt;xs1.h&gt;
+#include "port32A.h"
+
+/* Functions that handle functions that must occur on stream
+ * start/stop e.g. DAC mute/un-mute.These need implementing
+ * for a specific design.
+ *
+ * Implementations for the L1 USB Audio Reference Design
+ */
+
+/* Any actions required for stream start e.g. DAC un-mute - run every
+ * stream start.
+ *
+ * For L1 USB Audio Reference Design we illuminate LED B (connected
+ * to port 32A)
+ *
+ * Since this port is shared with other functionality inline assembly
+ * is used to access the port resource.
+ */
+void UserAudioStreamStart(void)
+{
+    int x;
+
+    /* Peek at current port value using port 32A resource ID */
+    asm("peek %0, res[%1]":"=r"(x):"r"(XS1_PORT_32A));
+
+    x |= P32A_LED_B;
+
+    /* Output to port */
+    asm("out res[%0], %1"::"r"(XS1_PORT_32A),"r"(x));
+}
+
+/* Any actions required on stream stop e.g. DAC mute - run every
+ * stream stop
+ * For L1 USB Audio Reference Design we extinguish LED B (connected
+ * to port 32A)
+ */
+void UserAudioStreamStop(void)
+{
+    int x;
+
+    asm("peek %0, res[%1]":"=r"(x):"r"(XS1_PORT_32A));
+    x &= (~P32A_LED_B);
+    asm("out res[%0], %1"::"r"(XS1_PORT_32A),"r"(x));
+}
+
+
+</pre>
+</div><h3 id="the-main-program">The main program</h3>
+<div><p>The <tt class="docutils literal"><span class="pre">main()</span></tt> function is shared across all applications is therefore part of the framework.
+It is located in <tt class="docutils literal"><span class="pre">sc_usb_audio</span></tt> and contains:</p>
+<ul>
+<li>A declaration of all the ports used in the framework. These vary
+depending on the PCB an application is running on.</li>
+<li>A <tt class="docutils literal"><span class="pre">main</span></tt> function which declares some channels and then has a
+<tt class="docutils literal"><span class="pre">par</span></tt> statement which runs the required cores in parallel.</li>
+</ul>
+<p>The framework supports devices with multiple tiles so it uses the <tt class="docutils literal"><span class="pre">on</span> <span class="pre">tile[n]:</span></tt> syntax.</p>
+<p>The first core run is the XUD library:</p>
+<pre>
+#if (AUDIO_CLASS==2)
+        XUD_Manager(c_xud_out, ENDPOINT_COUNT_OUT, c_xud_in, ENDPOINT_COUNT_IN,
+            c_sof, epTypeTableOut, epTypeTableIn, p_usb_rst,
+            clk, 1, XUD_SPEED_HS, pwrConfig);
+#else
+        XUD_Manager(c_xud_out, ENDPOINT_COUNT_OUT, c_xud_in, ENDPOINT_COUNT_IN,
+            c_sof, epTypeTableOut, epTypeTableIn, p_usb_rst,
+            clk, 1, XUD_SPEED_FS, pwrConfig);
+#endif
+
+
+</pre>
+<p>The make up of the channel arrays connecting to this driver are
+described in <a class="reference" href="page3.html#usb-audio-sec-component-api"><span>Component API</span></a>.</p>
+<p>The channels connected to the XUD driver are fed into the buffer
+and decouple cores:</p>
+<pre>
+            buffer(c_xud_out[ENDPOINT_NUMBER_OUT_AUDIO],/* Audio Out*/
+                c_xud_in[ENDPOINT_NUMBER_IN_AUDIO],     /* Audio In */
+                c_xud_in[ENDPOINT_NUMBER_IN_FEEDBACK],      /* Audio FB */
+#ifdef MIDI
+                c_xud_out[ENDPOINT_NUMBER_OUT_MIDI],  /* MIDI Out */ // 2
+                c_xud_in[ENDPOINT_NUMBER_IN_MIDI],    /* MIDI In */  // 4
+                c_midi,
+#endif
+#ifdef IAP
+                c_xud_out[ENDPOINT_NUMBER_OUT_IAP],   /* iAP Out */
+                c_xud_in[ENDPOINT_NUMBER_IN_IAP],     /* iAP In */
+#ifdef IAP_INT_EP
+                c_xud_in[ENDPOINT_NUMBER_IN_IAP_INT], /* iAP Interrupt In */
+#endif
+                c_iap,
+#endif
+#if defined(SPDIF_RX) || defined(ADAT_RX)
+                /* Audio Interrupt - only used for interrupts on external clock change */
+                c_xud_in[ENDPOINT_NUMBER_IN_INTERRUPT],
+#endif
+                c_sof, c_aud_ctl, p_for_mclk_count
+#ifdef HID_CONTROLS
+                , c_xud_in[ENDPOINT_NUMBER_IN_HID]
+#endif
+#ifdef CHAN_BUFF_CTRL
+                , c_buff_ctrl
+#endif
+            );
+
+</pre>
+<pre>
+        {
+            thread_speed();
+            decouple(c_mix_out, null
+#ifdef CHAN_BUFF_CTRL
+                , c_buff_ctrl
+#endif
+            );
+        }
+
+</pre>
+<p>These then connect to the audio driver which controls the I2S output and
+S/PDIF output (if enabled). If S/PDIF output is enabled, this
+component spawns into two cores as opposed to one.</p>
+<pre>
+        {
+            thread_speed();
+#ifdef MIXER
+            audio(c_mix_out, c_dig_rx, c_aud_cfg, c_adc);
+#else
+            audio(c_aud_in, c_dig_rx, c_aud_cfg, c_adc);
+#endif
+        }
+
+</pre>
+<p>Finally, if MIDI is enabled you need a core to drive the MIDI input
+and output.  The MIDI core also optionally handles authentication with Apple devices.
+Due to licensing issues this code is only available to Apple MFI licensees.  Please contact XMOS
+for details.</p>
+<pre>
+        on tile[MIDI_TILE]:
+        {
+            thread_speed();
+            usb_midi(p_midi_rx, p_midi_tx, clk_midi, c_midi, 0, null, null, null, null);
+        }
+
+</pre>
+</div></div><span id="document-prog_modification"></span><h2 class="topic" id="adding-custom-code">Adding Custom Code</h2>
+<div><p>The flexibility of the USB audio solution means that you can modify
+the reference applications to change the feature set or add extra
+functionality. Any part of the software can be altered with the exception of the
+XUD library.</p>
+<p class="note">The reference designs have been verified against a variety of host
+OS types, across different samples rates. However, modifications to
+the code may invalidate the results of this verification and you are strongly encouraged to fully
+re- test the resulting software.</p>
+<p>The general steps are:</p>
+<ol class="arabic simple">
+<li>Make a copy of the eclipse project or
+application directory (.e.g. <tt class="docutils literal"><span class="pre">app_usb_aud_l1</span></tt> or <tt class="docutils literal"><span class="pre">app_usb_aud_l2</span></tt>)
+you wish to base your code on, to a separate directory with a different name.</li>
+<li>Make a copy of any modules you wish to alter (most of the time
+you probably do not want to do this). Update the Makefile of your
+new application to use these new custom modules.</li>
+<li>Make appropriate changes to the code, rebuild and reflash the
+device for testing.</li>
+</ol>
+<p>Once you have made a copy, you need to:</p>
+<ol class="arabic simple">
+<li>Provide a <tt class="docutils literal"><span class="pre">.xn</span></tt> file for your board (updating the <cite>TARGET</cite>
+variable in the Makefile appropriately).</li>
+<li>Update <tt class="docutils literal"><span class="pre">device_defines.h</span></tt> with the specific defines you wish
+to set.</li>
+<li>Update <tt class="docutils literal"><span class="pre">main.xc</span></tt>.</li>
+<li>Add any custom code in other files you need.</li>
+</ol>
+<p>The following sections show some example changes with a high level
+overview of how to change the code.</p>
+<h3 id="example-changing-output-format">Example: Changing output format</h3>
+<div><p>You may wish to customize the digital output format e.g. for a
+CODEC that expects sample data left justified with respect to the
+word clock.</p>
+<p>To do this you need to alter the main audio driver loop in
+<tt class="docutils literal"><span class="pre">audio.xc</span></tt>. After the alteration you need to re-test the
+functionality. The XMOS Timing Analyzer can help
+guarantee that your changes do not break the timing requirement of
+this core.</p>
+</div><h3 id="example-adding-dsp-to-output-stream">Example: Adding DSP to output stream</h3>
+<div><p>To add some DSP requires an extra core of computation, so some
+existing functionality needs to be removed (e.g. S/PDIF). Follow
+these steps to update the code:</p>
+<ol class="arabic simple">
+<li>Remove some functionality using the defines in
+<a class="reference" href="page3.html#sec-custom-defines-api"><span>Configuration Defines</span></a> to free up a core.</li>
+<li>Add another core to do the DSP. This core will probably have
+three XC channels: one channel to receive samples from decoupler
+core and another to output to the audio driver&#8212;this way the
+core &#8216;intercepts&#8217; audio data on its way to the audio driver; the
+third channel can receive control commands from Endpoint 0.</li>
+<li>Implement the DSP on this core. This needs to be synchronous
+(i.e. for every sample received from the decoupler, a sample needs
+to be outputted to the audio driver).</li>
+</ol>
+</div></div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page0.html">USB Audio Solution Overview</a></li>
+             <li><a href="page1.html">USB Audio Hardware Platforms</a></li>
+             <li><a href="page2.html">USB Audio Software Architecture</a></li>
+             <li><a href="page6.html">Features & Options</a></li>
+             <li><a href="page5.html">USB Audio Applications</a></li>
+             <li><a href="page3.html">USB Audio API Reference</a></li>
+             <li><a href="page7.html">Frequently Asked Questions</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

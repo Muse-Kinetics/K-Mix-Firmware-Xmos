@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--XDE partnum="XM-002775-SM" version="6.6.0rc5"-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>XMOS USB Audio 2.0 Reference Design README &mdash; XMOS USB Audio 2.0 Reference Design README v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="XMOS USB Audio 2.0 Reference Design README v documentation" href="#" />
+    <link rel="next" title="sw_usb_audio Change Log" href="changelog.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>XMOS USB Audio 2.0 Reference Design README</h1>
+
+             <div class='columns'>
+            
+  <ul class="field_list"><li><h2>Version</h2>
+<p><p>6.6.0rc5</p>
+</p>
+</li>
+<li><h2>Vendor</h2>
+<p><p>XMOS</p>
+</p>
+</li>
+<li><h2>Description</h2>
+<p><p>USB Audio Applications</p>
+</p>
+</li>
+</ul>
+<p>Please note, Alpha and Beta releases may not accurately reflect the final release and documentation may not be complete. These early releases are not suitable for a production context, and are provided for evaluation purposes only.</p>
+<p>Welcome to version 6 of the XMOS USB Audio Software Framework.</p>
+<p>The main feature of version 6 over previous versions of the XMOS USB Audio software framework and associated applications is the added support for U series devices.</p>
+<p>Please see CHANGELOG.rst for detailed change listing.</p>
+<p>For full software documentation please see the USB Audio Design Guide document.</p>
+<p>This release is built and tested using version 13 of the XMOS tool set.  Build or functionality issues could be experienced with any other version.</p>
+<p>This repository contains applications (or instances) of the XMOS USB Audio Reference Design framework.  These applications
+typically relate to a specific board.  This repository contains the following:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="24%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>App Name</p>
+</th>
+<th class="head"><p>Relevant Board(s)</p>
+</th>
+<th class="head"><p>Description</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>app_usb_aud_l1</p>
+</td>
+<td><p>xr-usb-audio-2.0</p>
+</td>
+<td><p>XMOS XS1-L8 USB Audio Reference Design</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_skc_su1</p>
+</td>
+<td><p>xp-skc-su1 &amp; xa-sk-audio</p>
+</td>
+<td><p>XMOS XS1-U8 USB Audio Kit</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_su1</p>
+</td>
+<td><p>xr-usb-audio-s1</p>
+</td>
+<td><p>XMOS XS1-U8 USB Audio Reference Design (prototype only)</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_xk_u8_2c</p>
+</td>
+<td><p>xk-usb-audio-u8-2c</p>
+</td>
+<td><p>XMOS XS1-U8 Multi-Function Audio Board</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_l2</p>
+</td>
+<td><p>xk-usb-audio-2.0-mc</p>
+</td>
+<td><p>XMOS XS1-L16 USB Audio Reference Design</p>
+</td>
+</tr>
+<tr><td><p>app_usb_aud_u16</p>
+</td>
+<td><p>xp-skc-u16 &amp; xa-sk-audio</p>
+</td>
+<td><p>XMOS XS1-U16 sliceKIT Core Board and Audio Slice</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Please refer to individual README files in these apps for more detailed information.</p>
+<p>Each application contains a &#8220;core&#8221; folder, this folder contains items that are required to use and run the USB Audio application framework.
+Mandatory files per application include:</p>
+<ul>
+<li>An XN file describing the board including required port defines. The XN file is referenced in the application makefile.</li>
+<li>customdefines.h header file containing configuration items such as channel count, strings etc.</li>
+</ul>
+<p>Each application also contains an &#8220;extensions&#8221; folder which includes board specific extensions such as CODEC configuration etc.</p>
+<p>Additionally some options are contained in Makefiles for building multiple configurations of an application. For example
+app_usb_aud_l1 builds a MIDI and S/PDIF configurations.  See the USB Audio Software Design Guide for full details.</p>
+<h2 class="topic" id="software-blocks">Software Blocks</h2>
+<div><dl class="docutils">
+<dt>XMOS XS1-L8 USB Audio 2.0 Reference Design (app_usb_aud_l1) (app_usb_aud_l1)</dt>
+<dd><p>USB Audio for L1 USB Audio board</p>
+</dd>
+<dt>XMOS XS1-L2 USB Audio 2.0 Reference Design (app_usb_aud_l2) (app_usb_aud_l2)</dt>
+<dd><p>USB Audio for L2 USB Audio</p>
+</dd>
+<dt>XMOS XS1-U8 USB Audio (app_usb_aud_skc_su1)</dt>
+<dd><p>USB Audio application for XP-SKC-SU1 and XA-SK-AUDIO (1v1)</p>
+</dd>
+<dt>XMOS XS1-U16 USB Audio (app_usb_aud_skc_u16)</dt>
+<dd><p>USB Audio application for XP-SKC-U16 and XA-SK-AUDIO (1v1)</p>
+</dd>
+<dt>XMOS XS1-U16 USB Audio (app_usb_aud_skc_u16_audio8)</dt>
+<dd><p>USB Audio application for XP-SKC-U16 and XA-SK-AUDIO8 (1v1)</p>
+</dd>
+<dt>XMOS XK-USB-AUDIO-U8-2C USB Audio (app_usb_aud_xk_u8_2c) (app_usb_aud_xk_u8_2c)</dt>
+<dd><p>USB Audio for XK-USB-AUDIO-U8-2C board</p>
+</dd>
+</dl>
+</div><h2 class="topic" id="documentation">Documentation</h2>
+<div><blockquote>
+<div><ul>
+<li><a class="reference" href="././doc/index.html"><span>USB Audio Design Guide</span></a> <a class="reference" href="././doc.pdf"><span>PDF</span></a></li>
+<li><a class="reference" href="././changelog.html"><span>Release Notes</span></a></li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="key-framework-features">Key Framework Features</h2>
+<div><p>Key features of the various applications in this repository are as follow.  Please refer to the application README for application specific feature set.</p>
+<ul>
+<li>USB Audio Class 1.0/2.0 Compliant</li>
+<li>Fully Asynchronous operation</li>
+<li>Support for the following sample frequencies: 44.1, 48, 88.2, 96, 176.4, 192, 352.8, 384kHz</li>
+<li>Input/output channel and individual volume/mute controls supported</li>
+<li>Support for dynamically selectable output audio formats (e.g. resolution)</li>
+<li>Field firmware upgrade compliant to the USB Device Firmware Upgrade (DFU) Class Specification</li>
+<li>S/PDIF output</li>
+<li>S/PDIF input</li>
+<li>ADAT input</li>
+<li>MIDI input/output (Compliant to USB Class Specification for MIDI devices)</li>
+<li>DSD output (Native and DoP mode) at DSD64 and DSD128 rates</li>
+<li>Mixer with flexible routing</li>
+<li>Simple playback controls via Human Interface Device (HID)</li>
+<li>Support for operation with Apple devices (requires sc_mfi for MFI licensees only - please contact XMOS)</li>
+</ul>
+<p>Note, not all features may be supported at all sample frequencies, simultaneously or on all devices.  Some features also require specific host driver support.</p>
+</div><h2 class="topic" id="support-status">Support Status</h2>
+<div><p>The following tables describe key features/build options that have been tested (and are therefore supported) with this release.</p>
+<p>The constraints table lists other features that may not operate as expected or may even fail the build process and are to be used only at the risk of the developer.</p>
+<p>In addition to these tables please see &#8220;Known Issues&#8221;.</p>
+<h3 id="constraints">Constraints</h3>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="33%" />
+<col width="13%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Option</p>
+</th>
+<th class="head"><p>Description</p>
+</th>
+<th class="head"><p>Status</p>
+</th>
+<th class="head"><p>Notes</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>ADAT_RX</p>
+</td>
+<td><p>ADAT input</p>
+</td>
+<td><p>Not supported</p>
+</td>
+<td><p>Must be set to 0</p>
+</td>
+</tr>
+<tr><td><p>ADAT_TX</p>
+</td>
+<td><p>ADAT output</p>
+</td>
+<td><p>Not Supported</p>
+</td>
+<td><p>Must be set to 0</p>
+</td>
+</tr>
+<tr><td><p>SPDIF_RX</p>
+</td>
+<td><p>S/PDIF input</p>
+</td>
+<td><p>Not supported</p>
+</td>
+<td><p>Must be set to 0</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div><h3 id="supported-options">Supported Options</h3>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="24%" />
+<col width="9%" />
+<col width="26%" />
+<col width="18%" />
+<col width="9%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head"><p>Option</p>
+</th>
+<th class="head"><p>Description</p>
+</th>
+<th class="head"><p>Status</p>
+</th>
+<th class="head"><p>Notes</p>
+</th>
+<th class="head"><p>Example Binaries</p>
+</th>
+<th class="head"><p>Known Issues</p>
+</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td><p>SPDIF</p>
+</td>
+<td><p>S/PDIF output</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td>&nbsp;</td>
+<td><p>2xoxs, 2ioxs, 1ioxs, 1xoxs</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>NUM_USB_CHANS_IN</p>
+</td>
+<td><p>Number of audio channels to host</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td><p>Up to 10 channels</p>
+</td>
+<td><p>2xoxs, 2ioxs, 1ioxs, 1xoxs</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>NUM_USB_CHANS_OUT</p>
+</td>
+<td><p>Number of audio channels from host</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td><p>Up to 10 channels</p>
+</td>
+<td><p>2ioxs, 2ixxx, 1ioxs</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>I2S_CHANS_DAC</p>
+</td>
+<td><p>Number of I2S channels to DAC(s)</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td><p>Up to 8 channels</p>
+</td>
+<td><p>2xoxs, 2ioxs, 1ioxs, 2xoxx</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>I2S_CHANS_ADC</p>
+</td>
+<td><p>Number of I2S channels from ADC(s)</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td><p>Up to 6 channels</p>
+</td>
+<td><p>2ioxs, 2ixxx</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>DSD_CHANS_DAC</p>
+</td>
+<td><p>Enable DSD output (DoP and Native)</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td><p>0 or 2</p>
+</td>
+<td><p>2xoxxd, 2xoxsd, 2ioxsd</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>DFU</p>
+</td>
+<td><p>In field firmware upgrade</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td><p>Thesycon DFU app or example OSX app</p>
+</td>
+<td><p>All</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>MIDI</p>
+</td>
+<td><p>MIDI input/output</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td>&nbsp;</td>
+<td><p>2iomx</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><p>MAX_FREQ</p>
+</td>
+<td><p>Maximum Sample Rate</p>
+</td>
+<td><p>Supported</p>
+</td>
+<td><p>384kHz</p>
+</td>
+<td><p>All</p>
+</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</div></div><h2 class="topic" id="known-issues">Known Issues</h2>
+<div><p>General known issues with this release are listed below.  For board/application specific known issues please see README in relevant app directory</p>
+<ul>
+<li>(#14762) When in DSD mode with S/PDIF output enabled, DSD samples are transmitted over S/PDIF if the DSD and S/PDIF channels are shared, this may or may not be desired</li>
+<li>(#14173) I2S input is completely disabled when DSD output is active - the input stream to the host will contain 0 samples</li>
+<li>(#14780) Modifying the design to operate at a sample rate of 8kHz may expose a corner case relating to 0 length packet handling</li>
+<li>(#13893) 1024x Sample Rate master clocks are currently not supported (e.g. 49.152Mhz for Sample Rates below 96kHz)</li>
+<li>(#14883) Before DoP mode is detected a small number of DSD samples will be played out as PCM via I2S</li>
+<li>(#14887) Volume control settings currently affect samples in both DSD and PCM modes. This results in invalid DSD output if volume control not set to 0</li>
+<li>Windows XP volume control very sensitive.  The Audio 1.0 driver built into Windows XP (usbaudio.sys) does not properly support master volume AND channel volume controls, leading to a very sensitive control.  Descriptors can be easily modified to disable master volume control if required (one byte - bmaControls(0) in Feature Unit descriptors)</li>
+<li>88.2kHz and 176.4kHz sample frequencies are not exposed in Windows control panels.  These are known OS restrictions.</li>
+</ul>
+</div><h2 class="topic" id="host-system-requirements">Host System Requirements</h2>
+<div><ul>
+<li>Mac OSX version 10.6 or later</li>
+<li>Windows XP, Vista, 7 or 8, with Thesycon Audio Class 2.0 driver for Windows (Tested against version 2.19). Please contact XMOS for details.</li>
+<li>Windows XP, Vista, 7 or 8 with built-in USB Audio Class 1.0 driver.</li>
+</ul>
+</div><h2 class="topic" id="in-field-firmware-upgrade">In Field Firmware Upgrade</h2>
+<div><p>The firmware provides a Device Firmware Upgrade (DFU) interface compliant to the USB DFU Device Class.  An example host application is provided for OSX.  See README in example application for usage.  The Thesycon USB Audio Class 2.0 driver for Windows provides DFU functionality and includes an example application.</p>
+</div><h2 class="topic" id="required-software-dependencies">Required software (dependencies)</h2>
+<div><blockquote>
+<div><ul>
+<li>sc_i2c</li>
+<li>sc_u_series_support</li>
+<li>sc_usb</li>
+<li>sc_spdif</li>
+<li>sc_usb_audio</li>
+<li>sc_usb_device</li>
+<li>sc_util</li>
+<li>sc_xud</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="support">Support</h2>
+<div><blockquote>
+<div><p>This package is support by XMOS Ltd. Issues can be raised against the software
+at:</p>
+<blockquote>
+<div><p><a class="reference" href="http://www.xmos.com/support"><span>http://www.xmos.com/support</span></a></p>
+</div></blockquote>
+</div></blockquote>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

@@ -1,0 +1,159 @@
+#ifndef XSCOPE_USER_H_
+#define XSCOPE_USER_H_
+
+#ifdef XSCOPE
+#undef XSCOPE
+#endif
+
+//#define APP_OWNS_DEBUG_PORT
+
+#define BREAK_ON_SIGNAL
+#define SYNC_ON_SIGNAL
+
+#define SIGNAL_ON_ERROR
+//#define SIGNAL_ON_START
+
+
+//#define ERROR_AFTER_TX_COUNT    20
+
+#if defined(SYNC_ON_SIGNAL) || defined(BREAK_ON_SIGNAL)
+#define SIGNAL_MONITOR
+#endif
+
+#if defined(SIGNAL_ON_ERROR) || defined(SIGNAL_ON_START)
+#define SIGNAL_SEND
+#endif
+
+#if defined(SIGNAL_MONITOR) || defined(SIGNAL_SEND)
+#define SIGNAL_PORT
+#endif
+
+
+
+enum {
+    DEBUG_SYNC,
+    DEBUG_LOST_ARB_MASTER,          DEBUG_LOST_ARB_SLAVE,   DEBUG_SLAVE_EVENT_RX,           DEBUG_SLAVE_EVENT_TX,
+    DEBUG_MASTER_EVENT_RX,          DEBUG_MASTER_EVENT_TX,  DEBUG_MASTER_WRITE_REG_WORD,    DEBUG_MASTER_WRITE_REG_WORD_FULL,
+    DEBUG_MASTER_EVENT_PUSH,        DEBUG_SLAVE_EVENT_PUSH, DEBUG_ADVANCE_QUEUE_FRONT,      DEBUG_STATE_TRANSITION ,
+    DEBUG_EVENT_SLAVE_WRONG_ADDRESS,DEBUG_SLAVE_SDA_CHANGE,  DEBUG_QUEUE_TX,                 DEBUG_START_ASSERTED,
+    DEBUG_START_DETECTED,           DEBUG_STOP_DETECTED,    DEBUG_ADVANCE_QUEUE_ERROR,      DEBUG_SLAVE_RX_DATA,
+    DEBUG_SLAVE_TX_DATA,            DEBUG_MASTER_TX_DATA,   DEBUG_MASTER_RX_DATA,           DEBUG_SDA,
+    DEBUG_SDA_PEEK,                 DEBUG_SCL_PEEK,         DEBUG_IO_QUIT,                  DEBUG_SLAVE_RX_NAK,
+    DEBUG_SLAVE_RX_ACK,             DEBUG_SLAVE_RX_COUNT1,  DEBUG_SLAVE_RX_COUNT5,          DEBUG_1,
+    DEBUG_2,                        DEBUG_3,                DEBUG_4,                        DEBUG_5,
+    DEBUG_6,                        DEBUG_7,                DEBUG_8,                        DEBUG_9,
+    DEBUG_10,
+
+    DEBUG_LAST};
+
+
+
+#ifdef XSCOPE
+
+
+#define XSCOPE_DEBUG_I2C
+//#define XSCOPE_DEBUG_MIDI
+
+#ifdef XSCOPE_DEBUG_I2C
+
+//#define RECORD_I2C_STATE
+
+
+#define str(s) #s
+
+#define XSCOPE_REGISTER \
+    DEBUG_LAST, \
+    \
+    XSCOPE_CONTINUOUS, str(SYNC), XSCOPE_UINT, "units",\
+    \
+    XSCOPE_CONTINUOUS, str(LOST_ARB_MASTER), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(LOST_ARB_SLAVE), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(SLAVE_RX), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(SLAVE_TX), XSCOPE_UINT, "e",\
+    \
+    XSCOPE_CONTINUOUS, str(MASTER_EVENT_RX), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(MASTER_EVENT_TX), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(MASTER_WRITE_REG_WORD), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(MASTER_WRITE_REG_WORD_FULL), XSCOPE_UINT, "e",\
+    \
+    XSCOPE_CONTINUOUS, str(MASTER_EVENT_PUSH), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(SLAVE_EVENT_PUSH), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(ADVANCE_QUEUE_FRONT), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(STATE_TRANSITION), XSCOPE_UINT, "e",\
+    \
+    XSCOPE_CONTINUOUS, str(SLAVE_WRONG_ADDRESS), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(SLAVE_SDA_CHANGE), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(QUEUE_TX), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(START_ASSERTED), XSCOPE_UINT, "e",\
+    \
+    XSCOPE_CONTINUOUS, str(START_DETECTED), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(STOP_DETECTED), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(ADVANCE_QUEUE_ERROR), XSCOPE_UINT, "e", \
+    XSCOPE_CONTINUOUS, str(SLAVE_RX_DATA), XSCOPE_UINT, "v",\
+    \
+    XSCOPE_CONTINUOUS, str(SLAVE_TX_DATA), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(MASTER_TX_DATA), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(MASTER_RX_DATA), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(SDA), XSCOPE_UINT, "v",\
+    \
+    XSCOPE_CONTINUOUS, str(SDA_PEEK), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(SCL_PEEK), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(IO_QUIT), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(SLAVE_RX_NAK), XSCOPE_UINT, "e",\
+    \
+    XSCOPE_CONTINUOUS, str(SLAVE_RX_ACK), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(DEBUG_SLAVE_RX_COUNT1), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(DEBUG_SLAVE_RX_COUNT5), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(1), XSCOPE_UINT, "e",\
+    \
+    XSCOPE_CONTINUOUS, str(2), XSCOPE_UINT, "v",\
+    XSCOPE_CONTINUOUS, str(3), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(4), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(5), XSCOPE_UINT, "e",\
+    \
+    XSCOPE_CONTINUOUS, str(6), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(7), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(8), XSCOPE_UINT, "e",\
+    XSCOPE_CONTINUOUS, str(9), XSCOPE_UINT, "e",\
+    \
+    XSCOPE_CONTINUOUS, str(10), XSCOPE_UINT, "e"
+
+
+#endif //XSCOPE_DEBUG_I2C
+
+
+
+
+#endif  // XSCOPE
+
+#define DEBUG_PUT_USE_XSCOPE
+
+#ifdef DEBUG_PUT_USE_XSCOPE
+
+#ifdef XSCOPE
+
+//#define DEBUG_PUT(val)  xscope_int(0,val);
+#define DEBUG_PUT_STATE(state)  xscope_int(state,0);
+#define DEBUG_PUT_VAL(state,val) xscope_int(state,val);
+#else
+#define DEBUG_PUT_STATE(state)
+#define DEBUG_PUT_VAL(state,val)
+#endif
+
+#else
+
+#define DEBUG_PUT(val)  debug_put(val);
+struct {unsigned char index,last;int buffer[256];} debug;
+void debug_put(int val)
+{
+    if (val==DEBUG_STOP_DETECTED && debug.last == DEBUG_MASTER_WRITE_REG_WORD)
+        stop_here();
+    debug.buffer[debug.index++] = val;
+    debug.last = val;
+}
+
+#endif
+
+
+
+#endif /* XSCOPE_USER_H_ */

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<allbuildresults>
+<buildresults component="module_i2c_master" packagename="xm-local-sc_i2c(2.4.1rc1)" packageversion="2.4.1rc1" toolsversion="latest">
+<buildresult>
+<configuration>
+<parameter id="ClockPeriod" value="1000"/>
+</configuration>
+<resourceusage>
+<resourceusageitem id="cores" value="0"/>
+<resourceusageitem id="memory" value="0"/>
+<resourceusageitem id="codememory" value="1084"/>
+<resourceusageitem id="datamemory" value="28"/>
+<resourceusageitem id="ports1bit" value="2"/>
+<resourceusageitem id="ports4bit" value="0"/>
+<resourceusageitem id="ports8bit" value="0"/>
+<resourceusageitem id="ports16bit" value="0"/>
+<resourceusageitem id="ports32bit" value="0"/>
+<resourceusageitem id="clocks" value="0"/>
+<resourceusageitem id="chanends" value="0"/>
+<resourceusageitem id="timers" value="0"/>
+<resourceusageitem id="hwtimers" value="0"/>
+<resourceusageitem id="distributed_tasks" value="0"/>
+<resourceusageitem id="combined_tasks" value="0"/>
+</resourceusage>
+</buildresult>
+</buildresults>
+</allbuildresults>

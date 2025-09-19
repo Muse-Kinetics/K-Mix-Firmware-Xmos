@@ -1,0 +1,172 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>USB Audio Solution Overview &mdash; USB Audio Design Guide v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="USB Audio Design Guide v documentation" href="index.html" />
+    <link rel="next" title="USB Audio Hardware Platforms" href="page1.html" />
+    <link rel="prev" title="USB Audio Design Guide" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>USB Audio Solution Overview</h1>
+
+             <div class='columns'>
+            
+  <table border="1" class="vertical-borders docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<tbody valign="top">
+<tr><td colspan="2"><p><strong>Functionality</strong></p>
+</td>
+</tr>
+<tr><td colspan="2"><p>Provides USB interface to audio I/O.</p>
+</td>
+</tr>
+<tr><td colspan="2"><p><strong>Supported Standards</strong></p>
+</td>
+</tr>
+<tr><td rowspan="5"><p>USB</p>
+</td>
+<td><p>USB 2.0 (Full-speed and High-speed)</p>
+</td>
+</tr>
+<tr><td><p><a class="reference" href="http://www.usb.org/developers/devclass_docs/audio10.pdf"><span>USB Audio Class 1.0</span></a></p>
+</td>
+</tr>
+<tr><td><p><a class="reference" href="http://www.usb.org/developers/devclass_docs/Audio2.0_final.zip"><span>USB Audio Class 2.0</span></a></p>
+</td>
+</tr>
+<tr><td><p><a class="reference" href="http://www.usb.org/developers/devclass_docs/DFU_1.1.pdf"><span>USB Firmware Upgrade (DFU) 1.1</span></a></p>
+</td>
+</tr>
+<tr><td><p><a class="reference" href="http://www.usb.org/developers/devclass_docs/midi10.pdf"><span>USB Midi Device Class 1.0</span></a></p>
+</td>
+</tr>
+<tr><td rowspan="5"><p>Audio</p>
+</td>
+<td><p>I2S</p>
+</td>
+</tr>
+<tr><td><p>S/PDIF</p>
+</td>
+</tr>
+<tr><td><p>ADAT</p>
+</td>
+</tr>
+<tr><td><p>Direct Stream Digital (DSD)</p>
+</td>
+</tr>
+<tr><td><p>MIDI</p>
+</td>
+</tr>
+<tr><td colspan="2"><p><strong>Supported Sample Frequencies</strong></p>
+</td>
+</tr>
+<tr><td colspan="2"><p>44.1kHz, 48kHz, 88.2kHz, 96kHz, 176.4kHz, 192kHz, 352.8kHz, 384kHz</p>
+</td>
+</tr>
+<tr><td colspan="2"><p><strong>Supported Devices</strong></p>
+</td>
+</tr>
+<tr><td rowspan="3"><p>XMOS Devices</p>
+</td>
+<td><p>XS1 L-Series</p>
+</td>
+</tr>
+<tr><td><p>XS1 U-Series</p>
+</td>
+</tr>
+<tr><td><p>XS1 G-Series (Not recommended for new designs)</p>
+</td>
+</tr>
+<tr><td colspan="2"><p><strong>Requirements</strong></p>
+</td>
+</tr>
+<tr><td><p>Development Tools</p>
+</td>
+<td><p>xTIMEcomposer Development Tools v13 or later</p>
+</td>
+</tr>
+<tr><td><p>USB</p>
+</td>
+<td><p>External ULPI USB Phy (If using XS1 G/L-Series)</p>
+</td>
+</tr>
+<tr><td><p>Audio</p>
+</td>
+<td><p>External audio DAC/ADC/CODECs (and required supporting componentry)  supporting I2S</p>
+</td>
+</tr>
+<tr><td><p>Boot/Storage</p>
+</td>
+<td><p>Compatible SPI Flash device</p>
+</td>
+</tr>
+<tr><td colspan="2"><p><strong>Licensing and Support</strong></p>
+</td>
+</tr>
+<tr><td colspan="2"><p>Reference code provided without charge under license from XMOS.</p>
+</td>
+</tr>
+<tr><td colspan="2"><p>Please visit <a class="reference" href="http://www.xmos.com/support/contact"><span>http://www.xmos.com/support/contact</span></a> for support.</p>
+</td>
+</tr>
+<tr><td colspan="2"><p>Reference code is maintained by XMOS Limited.</p>
+</td>
+</tr>
+</tbody>
+</table>
+
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div><div id="local_seealso">
+             <h1>See Also</h1>
+             <ul class="iconmenu">
+             <li><a href="page1.html">USB Audio Hardware Platforms</a></li>
+             <li><a href="page2.html">USB Audio Software Architecture</a></li>
+             <li><a href="page6.html">Features & Options</a></li>
+             <li><a href="page4.html">USB Audio Programming Guide</a></li>
+             <li><a href="page5.html">USB Audio Applications</a></li>
+             <li><a href="page3.html">USB Audio API Reference</a></li>
+             <li><a href="page7.html">Frequently Asked Questions</a></li>
+             </ul>
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

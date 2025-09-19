@@ -1,0 +1,6 @@
+# type      subtype      buildnum       filepath
+# 0 = sharc
+# 1 = 8051
+
+0 48000 0 sharc_candidates/KMIX_Passthru.ldr
+0 96000 0 sharc_candidates/KMIX_Passthru.ldr

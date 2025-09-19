@@ -1,0 +1,283 @@
+-- -*- mode: lua -*-
+
+configPoints = {
+    series = {
+        short = "Device series being used",
+        long = "The devices series for which the library will be compiled",
+        help = [[
+The XUD library supports both the U-Series and L-Series devices. The library provides
+binaries for each device series. However, only the 13.0 and newer tools support changing
+the libraries on generation. Therefore, if using tools older than the 13.0 tools the line
+"MODULE_LIBRARIES = xud_l" must be added to the Makefile if using an L-Series device.
+                ]],
+        type = "string",
+        default = 1,
+        options = { ["U-Series"] = 1, ["L-Series"] = 2},
+        define = "XUD_SERIES_SUPPORT"
+    },
+    num_ep_in = {
+        short = "Number of IN endpoints",
+        long = "The number of IN endpoints to create",
+        help = [[
+The number of IN endpoints.
+                ]],
+        type = "int",
+        default = 2,
+        min = 2,
+        max = 4,
+        define = "XUD_EP_COUNT_IN"
+    },
+    num_ep_out = {
+        short = "Number of OUT endpoints",
+        long = "The number of OUT endpoints to create",
+        help = [[
+The number of OUT endpoints.
+                ]],
+        type = "int",
+        default = 1,
+        min = 1,
+        max = 4,
+        define = "XUD_EP_COUNT_OUT"
+    }
+}
+
+derivedValues = {}
+
+buildResultsTarget = "XP-SKC-U16"
+
+ports = {
+  p_usb_clock = {
+    short      = "USB Clock Port",
+    long       = "Port driving the USB clock",
+    help       = "",
+    width      = 1,
+    tile       = "tile[0]",
+    fixedValue = "XS1_PORT_1H"
+  },
+  p_usb_reg_write = {
+    short      = "USB Register Write Port",
+    long       = "Configuration register write port",
+    help       = "",
+    width      = 8,
+    tile       = "tile[0]",
+    fixedValue = "XS1_PORT_8C"
+  },
+  p_usb_reg_read = {
+    short      = "USB Register Read Port",
+    long       = "Configuration register read port",
+    help       = "",
+    width      = 8,
+    tile       = "tile[0]",
+    fixedValue = "XS1_PORT_8D"
+  },
+  p_usb_flag_0 = {
+    short      = "USB Flag Port 0",
+    long       = "Flag 0 port",
+    help       = "",
+    width      = 1,
+    tile       = "tile[0]",
+    fixedValue = "XS1_PORT_1N"
+  },
+  p_usb_flag_1 = {
+    short      = "USB Flag Port 1",
+    long       = "Flag 1 port",
+    help       = "",
+    width      = 1,
+    tile       = "tile[0]",
+    fixedValue = "XS1_PORT_1O"
+  },
+  p_usb_flag_2 = {
+    short      = "USB Flag Port 2",
+    long       = "Flag 2 port",
+    help       = "",
+    width      = 1,
+    tile       = "tile[0]",
+    fixedValue = "XS1_PORT_1P"
+  },
+  p_usb_tx_data = {
+    short      = "USB Transmit Data Port",
+    long       = "Port used to drive the transmit data",
+    help       = "",
+    width      = 8,
+    tile       = "tile[0]",
+    fixedValue = "XS1_PORT_8A"
+  },
+  p_usb_rx_data = {
+    short      = "USB Receive Data Port",
+    long       = "Port used to receive data",
+    help       = "",
+    width      = 8,
+    tile       = "tile[0]",
+    fixedValue = "XS1_PORT_8B"
+  },
+  p_usb_rst_n = {
+    short      = "USB Reset Port",
+    long       = "Port used to reset the USB PHY (only required on the L-Series)",
+    help       = "",
+    width      = 1,
+    tile       = "tile[0]",
+    enabled    = swblock.params.series == "2"
+  }
+}
+
+device_code = ""
+if swblock.params.series == "2" then
+  -- L-Series
+  device_code = device_code .. "#warning \"You need to change the makefile to use the L-Series library\""
+  device_code = device_code .. "/* USB Port declarations */\n"
+  device_code = device_code .. "#define USB_RST_PORT    XS1_PORT_32A\n"
+  device_code = device_code .. "on tile[0]: out port p_usb_rst   = USB_RST_PORT;\n"
+  device_code = device_code .. "on tile[0]: clock    clk_usb_rst = XS1_CLKBLK_3;\n"
+
+  moduleLibraries = "xud_l"
+else
+  -- U-Series
+  device_code = device_code .. "#define p_usb_rst null\n"
+  device_code = device_code .. "#define clk_usb_rst null\n"
+
+  moduleLibraries = "xud_u"
+end
+
+channels = {
+   c_ep_out = {
+      short = "OUT endpoint channels",
+      long = "Channels for communicating with OUT endpoints",
+      help = "",
+      arraySize = swblock.params.num_ep_out
+   },
+   c_ep_in = {
+      short = "IN endpoint channels",
+      long = "Channel for communicating with IN endpoints",
+      help = "",
+      arraySize = swblock.params.num_ep_in
+   }
+}
+
+function getConfigStatus()
+   return "Trusted", {}
+end
+
+generatedCode = {
+   includes = {"usb_std_requests.h", "xud.h", "usb_device.h", "hid.h", "null_descs.h"},
+   globals  = 
+       [[
+/* Endpoint type tables */
+XUD_EpType epTypeTableOut[XUD_EP_COUNT_OUT] = {XUD_EPTYPE_CTL | XUD_STATUS_ENABLE};
+XUD_EpType epTypeTableIn[XUD_EP_COUNT_IN] =   {XUD_EPTYPE_CTL | XUD_STATUS_ENABLE, XUD_EPTYPE_BUL};
+
+${device_code}
+
+/* String table */
+unsafe
+{
+static char * unsafe stringDescriptors[] = 
+{
+    "\x09\x04",                 // Language ID string (US English)
+    "XMOS",                     // iManufacturer 
+    "Empty Device",             // iProduct
+    "",                         // unUsed
+    "Config",                   // iConfiguration
+};
+}
+void Endpoint0(chanend chan_ep0_out, chanend chan_ep0_in)
+{
+    USB_SetupPacket_t sp;
+
+    unsigned bmRequestType; 
+    XUD_BusSpeed_t usbBusSpeed;
+    
+    XUD_ep ep0_out = XUD_InitEp(chan_ep0_out);
+    XUD_ep ep0_in  = XUD_InitEp(chan_ep0_in);
+    
+    while (1)
+    {
+        /* Returns 0 on success, < 0 for USB RESET */
+        int retVal = USB_GetSetupPacket(ep0_out, ep0_in, sp);
+        
+        if (!retVal) 
+        {
+            retVal = 1;
+
+            /* Stick bmRequest type back together for an easier parse... */
+            bmRequestType = (sp.bmRequestType.Direction << 7) |
+                            (sp.bmRequestType.Type << 5) |
+                            (sp.bmRequestType.Recipient);
+    
+            switch (bmRequestType)
+            {
+                case USB_BMREQ_D2H_STANDARD_INT:
+ 
+                    if (sp.bRequest == USB_GET_DESCRIPTOR)
+                    {
+                        /* HID Interface is Interface 0 */
+                        if (sp.wIndex == 0)
+                        {
+                            /* Look at Descriptor Type (high-byte of wValue) */ 
+                            unsigned short descriptorType = sp.wValue & 0xff00;
+            
+                            switch (descriptorType)
+                            {
+                                case HID_HID:
+                                    /* Enable if supporting a HID device */
+                                    /*retVal = XUD_DoGetRequest(ep0_out, ep0_in, hidDescriptor, 
+                                        sizeof(hidDescriptor), sp.wLength);*/
+                                    break;
+                        
+                                case HID_REPORT:
+                                    /* Enable if supporting a HID device */
+                                    /*retVal = XUD_DoGetRequest(ep0_out, ep0_in, hidReportDescriptor,
+                                        sizeof(hidReportDescriptor), sp.wLength);*/
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+
+                case USB_BMREQ_H2D_CLASS_INT:
+                case USB_BMREQ_D2H_CLASS_INT:
+
+                    /* If Implementing HID Class - handle HID Interface Class Request */
+                    break;
+            }
+        }
+
+        /* If we haven't handled the request about, 
+         * then do standard enumeration requests  */
+        if (retVal > 0)
+        {
+            /* Returns  0 if handled okay,
+             *          1 if request was not handled (STALLed),
+             *         -1 of USB Reset */
+            retVal = USB_StandardRequests(ep0_out, ep0_in, devDesc_Null,
+                        sizeof(devDesc_Null), cfgDesc_Null, sizeof(cfgDesc_Null),
+                        null, 0, null, 0, stringDescriptors, sizeof(stringDescriptors)/sizeof(stringDescriptors[0]), sp,
+                        usbBusSpeed);
+        }
+
+        /* USB bus reset detected, reset EP and get new bus speed */
+        if (retVal < 0)
+        {
+            usbBusSpeed = XUD_ResetEndpoint(ep0_out, ep0_in);
+        }
+    }
+}
+
+       ]],
+   body  = 
+       [[
+    par {
+        XUD_Manager(c_ep_out, XUD_EP_COUNT_OUT, c_ep_in, XUD_EP_COUNT_IN,
+                                null, epTypeTableOut, epTypeTableIn,
+                                p_usb_rst, clk_usb_rst, -1, XUD_SPEED_HS, XUD_PWR_BUS); 
+
+        Endpoint0(c_ep_out[0], c_ep_in[0]);
+    }
+       ]]
+}
+
+files = {["module_usb_device/xud_conf_example.h"] = "src/xud_conf.h"}
+api = {
+    "USB_StandardRequests",
+    "USB_GetSetupPacket",
+    "USB_PrintSetupPacket"
+}

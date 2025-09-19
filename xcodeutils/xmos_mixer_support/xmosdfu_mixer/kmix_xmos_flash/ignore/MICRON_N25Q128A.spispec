@@ -1,0 +1,23 @@
+    139,			/*MICRON_N25Q128A*/
+    256,			/* x page size */
+    65536,			/* x num pages */
+    3,				/* x address size */
+    3,				/* x log2 clock divider */
+    0x9f,			/* x SPI_RDID */
+    0,				/* id dummy bytes */
+    3,				/* x id size in bytes */
+    0x20BA18,			/* x device id */
+    0xd8,			/* x SPI_SE */
+    0, 				/* full sector erase */
+    0x06,			/* x SPI_WREN */
+    0x04, 			/* x SPI_WRDI */
+    PROT_TYPE_SR,		/* SR protection */
+    {{0x1c,0x0},{0,0}},		/* no values */
+    0x02,			/* SPI_PP */
+    0x0b,			/* SPI_READFAST */
+    1,				/* 1 read dummy byte */
+    SECTOR_LAYOUT_REGULAR, 	/* sane sectors */
+    {65536,{0,{0}}},		/* regular sector size */
+    0x05,			/* SPI_RDSR */
+    0x01,			/* no SPI_WRSR */
+    0x01,			/* SPI_WIP_BIT_MASK */

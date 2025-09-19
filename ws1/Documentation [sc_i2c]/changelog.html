@@ -1,0 +1,115 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>sc_i2c Change Log &mdash; XMOS I2C Master Component v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="XMOS I2C Master Component v documentation" href="index.html" />
+    <link rel="prev" title="XMOS I2C Master Component" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>sc_i2c Change Log</h1>
+
+             <div class='columns'>
+            
+  <h2 class="topic" id="id1">2.4.1</h2>
+<div><blockquote>
+<div><ul>
+<li>module_i2c_simple header-file comments updated to correctly reflect API</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id2">2.4.0</h2>
+<div><blockquote>
+<div><ul>
+<li>i2c_shared functions now take i2cPorts structure as param (rather than externed). This allows for
+multiple i2c buses</li>
+<li>Changes to dependencies:<ul>
+<li>sc_util: 1.0.3rc0 -&gt; 1.0.4rc0<ul>
+<li>module_logging now compiled at -Os</li>
+<li>debug_printf in module_logging uses a buffer to deliver messages unfragmented</li>
+<li>Fix thread local storage calculation bug in libtrycatch</li>
+<li>Fix debug_printf itoa to work for unsigned values &gt; 0x80000000</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id3">2.3.0</h2>
+<div><blockquote>
+<div><ul>
+<li>module_i2c_simple fixed to ACK correctly during multi-byte reads (all but the final byte will be now be ACKd)</li>
+<li>module_i2c_simple can now be built with support to send repeated starts and retry reads and writes NACKd by slave</li>
+<li>module_i2c_shared added to allow multiple logical cores to safely share a single I2C bus</li>
+<li>Removed readreg() function from single_port module since it was not safe</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id4">2.2.1</h2>
+<div><blockquote>
+<div><ul>
+<li>Documentation fixes</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id5">2.2.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Added I2C read/write functions with support of 16bit addresses</li>
+<li>reg_read and reg_write now use nbytes params to allow multiple byte register access</li>
+<li>Added support for i2c simple SDA on a 4 bit port</li>
+<li>data[0] is no longer overwritten in module_i2c_simple read</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id6">2.1.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Updated documents for xSOFTip requirements</li>
+<li>Added metainfo and XPD items</li>
+</ul>
+</div></blockquote>
+</div><h2 class="topic" id="id7">2.0.0</h2>
+<div><blockquote>
+<div><ul>
+<li>Initial Version</li>
+<li>Previous version on xmos.com</li>
+</ul>
+</div></blockquote>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

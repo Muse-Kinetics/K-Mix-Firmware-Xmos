@@ -1,0 +1,176 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Lock handling library &mdash; Lock handling library v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title="Lock handling library v documentation" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>Lock handling library</h1>
+
+             <div class='columns'>
+            
+  <p>This module provides access to hardware and software locks for use in
+concurrent C programs. In general it is not safe to use these to
+marshall within XC due to the assumptions XC
+makes about safe concurrent data access.</p>
+<p>Two types of locks are provided. Hardware locks are fast and power
+efficient but there are a limited number per tile. Software locks are
+slower but you can use an unlimited number of them.</p>
+<h2 class="topic" id="hardware-lock-api">Hardware lock API</h2>
+<div><ul class='lib'><li class="type">
+<h2 id="hwlock_t">
+<tt class="descname">hwlock_t</tt></h2>
+<p>This type represents a hardware lock.</p>
+</li>
+
+<li class="function">
+<h2 id="hwlock_alloc">
+hwlock_t <tt class="descname">hwlock_alloc</tt><big>(</big>void<big>)</big></h2>
+<p>Allocate a hardware lock.</p>
+<p>This function will allocate a new hardware lock from the pool of hardware locks available on the xCORE. The hardware has a limited number of hardware locks (for example, current L and S series devices have 4 locks per tile).</p>
+<h3 class="nosecnum compact" id="">Returns</h3>
+<div><p>the allocated lock if allocation is successful or the value <tt class="docutils literal"><span class="pre">HWLOCK_NOT_ALLOCATED</span></tt> if not.</p>
+</div></li>
+
+<li class="function">
+<h2 id="hwlock_free">
+void <tt class="descname">hwlock_free</tt><big>(</big><a class="reference" href="#hwlock_t" title="hwlock_t"><span>hwlock_t</span></a><em>&nbsp;lock</em><big>)</big></h2>
+<p>Free a hardware lock.</p>
+<p>This function frees a given hardware lock and returns it to the hardware pool to be reallocated elsewhere.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>lock</h2>
+<p>the hardware lock to be freed. If this is an invalid lock id or not an currently allocated lock then the function will trap.</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="hwlock_acquire">
+void <tt class="descname">hwlock_acquire</tt><big>(</big><a class="reference" href="#hwlock_t" title="hwlock_t"><span>hwlock_t</span></a><em>&nbsp;lock</em><big>)</big></h2>
+<p>Acquire a hardware lock.</p>
+<p>This function acquires a lock for the current logical core. If another core holds the lock the function will pause until the lock is released.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>lock</h2>
+<p>the hardware lock to acquire</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="hwlock_release">
+void <tt class="descname">hwlock_release</tt><big>(</big><a class="reference" href="#hwlock_t" title="hwlock_t"><span>hwlock_t</span></a><em>&nbsp;lock</em><big>)</big></h2>
+<p>Release a hardware lock.</p>
+<p>This function releases a lock from the current logical core. The lock should have been previously claimed by <a class="reference" href="#hwlock_acquire" title="hwlock_acquire"><span>hwlock_acquire()</span></a>.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>lock</h2>
+<p>the hardware lock to release</p>
+</li>
+</ul>
+</div></li>
+
+</ul></div><h2 class="topic" id="software-lock-api">Software lock API</h2>
+<div><ul class='lib'><li class="type">
+<h2 id="swlock_t">
+<tt class="descname">swlock_t</tt></h2>
+<p>Type that represents a software lock.</p>
+</li>
+
+<li class="macro">
+<h2 id="SWLOCK_INITIAL_VALUE">
+<tt class="descname">SWLOCK_INITIAL_VALUE</tt></h2>
+<p>This define should be used to initialize a software lock e.g.</p>
+<blockquote>
+<div><pre class="snip-single-inline">
+swlock_t my_lock = SWLOCK_INITIAL_VALUE;
+</pre>
+</div></blockquote>
+<p>If you intialize this way there is no need to call <a class="reference" href="#swlock_init" title="swlock_init"><span>swlock_init()</span></a>.</p>
+</li>
+
+<li class="function">
+<h2 id="swlock_init">
+void <tt class="descname">swlock_init</tt><big>(</big><a class="reference" href="#swlock_t" title="swlock_t"><span>swlock_t</span></a><em>&nbsp;&amp;lock</em><big>)</big></h2>
+<p>Initialize a software lock.</p>
+<p>This function will initialize a software lock for use. Note that unlike hardware locks, there is no need to allocate or free a software lock from a limited pool.</p>
+</li>
+
+<li class="function">
+<h2 id="swlock_try_acquire">
+int <tt class="descname">swlock_try_acquire</tt><big>(</big><a class="reference" href="#swlock_t" title="swlock_t"><span>swlock_t</span></a><em>&nbsp;&amp;lock</em><big>)</big></h2>
+<p>Try and acquire a software lock.</p>
+<p>This function tries to acquire a lock for the current logical core. If another core holds the lock then the function will fail and return.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>lock</h2>
+<p>the software lock to acquire.</p>
+</li>
+</ul>
+</div><h3 class="nosecnum compact" id="">Returns</h3>
+<div><p>a value that is equal to <tt class="docutils literal"><span class="pre">SWLOCK_NOT_ACQUIRED</span></tt> if the attempt fails. Any other value indicates that the acquisition has succeeded.</p>
+</div></li>
+
+<li class="function">
+<h2 id="swlock_acquire">
+void <tt class="descname">swlock_acquire</tt><big>(</big><a class="reference" href="#swlock_t" title="swlock_t"><span>swlock_t</span></a><em>&nbsp;&amp;lock</em><big>)</big></h2>
+<p>Acquire a software lock.</p>
+<p>This function acquires a lock for the current logical core. If another core holds the lock then the function will wait until it becomes available.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>lock</h2>
+<p>the software lock to acquire.</p>
+</li>
+</ul>
+</div></li>
+
+<li class="function">
+<h2 id="swlock_release">
+void <tt class="descname">swlock_release</tt><big>(</big><a class="reference" href="#swlock_t" title="swlock_t"><span>swlock_t</span></a><em>&nbsp;&amp;lock</em><big>)</big></h2>
+<p>Release a software lock.</p>
+<p>This function releases a previously acquired software lock for other cores to use.</p>
+<h3 class="nosecnum compact" id="">Parameters</h3>
+<div><ul class="field_list" class="latex_compact"><li><h2>lock</h2>
+<p>the software lock to release.</p>
+</li>
+</ul>
+</div></li>
+
+</ul></div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

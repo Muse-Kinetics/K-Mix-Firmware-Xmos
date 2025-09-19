@@ -1,0 +1,100 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Debug Printing Module &mdash;  v documentation</title>
+
+    <link rel="stylesheet" href=".static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href=".static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/ui.css" type="text/css" />
+    <link rel="stylesheet" href=".static/app.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/mobile.css"  type="text/css" />
+    <link rel="stylesheet" href=".static/xde.css"
+    type="text/css" /><script type="text/javascript" src=".static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src=".static/jquery.js"></script>
+    <script type="text/javascript" src=".static/underscore.js"></script>
+    <script type="text/javascript" src=".static/doctools.js"></script>
+    <link rel="top" title=" v documentation" href="index.html" /> 
+  </head>
+  <body class="xde indented-content" onload="prepareContents();">  
+          <div id="body">
+             <div id="content">
+             <h1>Debug Printing Module</h1>
+
+             <div class='columns'>
+            
+  <p>This module provides a lightweight printf function that can be enabled
+or disabled via configuration macros. Code can be declared to be
+within a &#8220;debug unit&#8221; (usually a module) and prints can be
+enabled/disabled per debug unit.</p>
+<h2 class="topic" id="api">API</h2>
+<div><p>To use this module, include <tt class="docutils literal"><span class="pre">module_logging</span></tt> in the application&#8217;s
+<tt class="docutils literal"><span class="pre">USED_MODULES</span></tt> list and include the <tt class="docutils literal"><span class="pre">debug_print.h</span></tt> header file.</p>
+<ul class='lib'><li class="function">
+<h2 id="debug_printf">
+void <tt class="descname">debug_printf</tt><big>(</big>char<em>&nbsp;fmt[]</em>, ...<big>)</big></h2>
+<p>A limited functionality version of printf that is low memory.</p>
+<p>This function works like C-standard printf except that it only accepts d, x, s, u and c format specifiers with no conversions. The function uses the functions from <tt class="docutils literal"><span class="pre">print.h</span></tt> to do the underlying printing.</p>
+<p>Unlike printf this function has no return value.</p>
+<p>Whether the function does any output can be controlled via defines such as <tt class="docutils literal"><span class="pre">DEBUG_PRINT_ENABLE</span></tt> or <tt class="docutils literal"><span class="pre">DEBUG_PRINT_ENABLE_[debug</span> <span class="pre">unit</span> <span class="pre">name]</span></tt> in the application&#8217;s <tt class="docutils literal"><span class="pre">debug_conf.h</span></tt></p>
+</li>
+
+</ul></div><h2 class="topic" id="debug-units">Debug Units</h2>
+<div><p>A source file can be added to a debug unit by defining the <tt class="docutils literal"><span class="pre">DEBUG_UNIT</span></tt> macro before inclusion of <tt class="docutils literal"><span class="pre">debug_print.h</span></tt>. For example:</p>
+<pre class="snip-multi-inline">
+#define DEBUG_UNIT ETHERNET_MODULE
+#include "debug_print.h"
+</pre>
+<p>To include all source files in a module in a particular debug unit, it is
+convenient to do it in the <tt class="docutils literal"><span class="pre">module_build_info</span></tt> file of the module e.g.:</p>
+<pre class="snip-single-inline">
+MODULE_XCC_FLAGS = $(XCC_FLAGS) -DDEBUG_UNIT=ETHERNET_MODULE
+</pre>
+<p>If no <tt class="docutils literal"><span class="pre">DEBUG_UNIT</span></tt> is defined then the default debug unit is <tt class="docutils literal"><span class="pre">APPLICATION</span></tt>.</p>
+</div><h2 class="topic" id="enabling-printing">Enabling Printing</h2>
+<div><p>By default, debug printing is turned <em>off</em>. To enable printing you
+need to include a file called <tt class="docutils literal"><span class="pre">debug_conf.h</span></tt> in your application. Within this
+file you can set the following defines:</p>
+<dl class="docutils">
+<dt>DEBUG_PRINT_ENABLE</dt>
+<dd><p>Setting this define to 1 or 0 will control whether debug prints are output.</p>
+</dd>
+<dt>DEBUG_PRINT_ENABLE_[debug unit]</dt>
+<dd><p>Enabling this define will cause printing to be enabled for a specific
+debug unit. If set to 1, this will override the default set by
+<tt class="docutils literal"><span class="pre">DEBUG_PRINT_ENABLE</span></tt>.</p>
+</dd>
+<dt>DEBUG_PRINT_DISABLE_[debug unit]</dt>
+<dd><p>Enabling this define will cause printing to be disabled for a specific
+debug unit. If set to 1, this will override the default set by
+<tt class="docutils literal"><span class="pre">DEBUG_PRINT_ENABLE</span></tt>.</p>
+</dd>
+</dl>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>
